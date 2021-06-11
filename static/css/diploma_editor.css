@@ -1,0 +1,104 @@
+.editor_container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 4px 20px 8px rgba(0, 0, 0, 0.5);
+    width: fit-content;
+    height: fit-content;
+}
+
+.resize_helper {
+    position: absolute;
+    display: flex;
+    width: 6px;
+    height: 6px;
+    border: rgb(36, 62, 229) solid 2px;
+    background: #FFFFFF;
+    border-radius: 100%;
+}
+
+.resize_helper:hover {
+    background: rgb(36, 62, 229);
+}
+
+.editor_panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    background: #FFFFFF;
+    box-shadow: 4px 4px 20px 8px rgba(0, 0, 0, 0.5);
+}
+
+.editor_panel option:hover {
+}
+
+.editor_panel__font_params {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-right: rgb(19, 52, 215) solid 1px;
+}
+
+.editor_panel__font_params__item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 5px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+.buttons_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 10px;
+}
+
+.buttons_container button {
+    padding: 7px 15px;
+    color: #FFFFFF;
+    background: linear-gradient(to bottom, rgb(23, 45, 255), rgb(23, 45, 255), rgb(23, 45, 255));
+    font-size: 17px;
+    outline: none;
+    border: none;
+    margin-right: 15px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.buttons_container button:hover {
+    background: linear-gradient(to bottom, rgb(38, 85, 255), rgb(10, 33, 248), rgb(12, 7, 222));
+}
+
+.buttons_container button:disabled {
+    background: rgb(45, 86, 234);
+    cursor: not-allowed;
+}
+
+.select_diplomas_container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: #FFFFFF;
+    padding: 10px;
+    box-shadow: rgba(0,0,0,0.25) 4px 4px 8px 0;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.select_diploma_template {
+    display: flex;
+    flex-direction: row;
+    background-position: center center;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    background-color: #979797;
+    border-radius: 10px;
+    border: #95d2f6 solid 2px;
+    width: 200px;
+    height: 200px;
+}

@@ -1,0 +1,49 @@
+body, html {
+    padding: 0;
+    margin: 0;
+}
+
+.main {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
+
+.navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgb(32, 78, 246), rgb(0, 22, 228), rgb(4, 1, 154));
+    padding: 10px 15px;
+}
+
+.navbar__items__container {
+    display: flex;
+}
+
+.navbar__item {
+    display: flex;
+    flex-direction: row;
+    color: #FFF;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 15px;
+    box-sizing: content-box;
+    border-top: rgba(0,0,0,0) solid 3px;
+    border-bottom: rgba(0,0,0,0) solid 3px;
+    transition: background .1s;
+}
+
+.navbar__item:hover {
+    background: linear-gradient(to top, #f1b129, #ce900b, #b67f07);
+    border-top: rgb(26, 222, 222) solid 3px;
+    border-bottom: rgb(26, 222, 222) solid 3px;
+}
+
+.navbar__item:active {
+    border-top: #b67f07 solid 3px;
+    border-bottom: #f1b129 solid 3px;
+}

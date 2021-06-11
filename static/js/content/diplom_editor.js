@@ -1,0 +1,338 @@
+class DiplomaEditor {
+    constructor(container, diploma) {
+        // containers and image src
+        this.container = $('<section data-action="edit_diploma" class="editor_container"></section>')
+        this.diploma = diploma || window.history.state.selectedTemplate
+
+        // container coordinates
+        this.containerX = 0
+        this.containerY = 0
+
+        // selected place coordinates
+        this.x1 = window.history.state.x1
+        this.x2 = window.history.state.x2
+        this.y1 = window.history.state.y1
+        this.y2 = window.history.state.y2
+
+        this.data = {
+            x1: window.history.state.x1,
+            x2: window.history.state.x2,
+            y1: window.history.state.y1,
+            y2: window.history.state.y2,
+        }
+
+        this.hd = new HistoryDirections(this.data)
+
+        // coordinates for move selected place
+        this.currentX = 0
+        this.currentY = 0
+
+        // any flags
+        this.isSelectingPlace = false
+        this.selectedPlaceIsMoving = false
+        this.isResizeSelectedPlace = false
+    }
+
+    init() {
+        this.hd.init()
+        this.hd.next = () => {
+            this.setData()
+            let s = parseInt(new URLSearchParams(location.search).get('step')) + 1
+            window.history.pushState({step: s, ...this.data}, document.title, '?step=' + s)
+            $('[data-action="main"] section').remove()
+            this.hd.setContent()
+        }
+        $('[data-action="main"]').append(this.container)
+        this.container.html(this.container.html() + `<img src="${this.diploma}" alt=""/>`)
+        this.managePanel = new DiplomaEditorManagePanel(mP, this.container)
+        this.container.find('img').on('load', e => {
+            let left = window.innerWidth / 2 - this.container[0].clientWidth / 2
+            this.container.css({'top': 300, 'left': left - 8})
+            this.managePanel.init()
+            this.containerX = this.container[0].offsetLeft
+            this.containerY = this.container[0].offsetTop - window.scrollY
+        })
+        this.x1 && this.x2 && this.rerenderSelectedPlace()
+    }
+
+    setActionListeners() {
+        window.onscroll = e => {
+            this.containerY = this.container[0].offsetTop - window.scrollY
+        }
+
+        this.container.on('mousedown', e => {
+            this.overrideEventListener(e)
+            this.isSelectingPlace = true
+            if (!this.checkSelectedPlace()) {
+                this.setCoordinates(e.clientX, e.clientX, e.clientY, e.clientY)
+                this.createSelectedPlace()
+            } else if (!this.isResizeSelectedPlace) {
+                this.setCoordinates(this.x1, e.clientX, this.y1, e.clientY)
+                this.rerenderSelectedPlace()
+            }
+        })
+
+        this.container.on('mouseup', () => {
+            this.isSelectingPlace = false
+            this.isResizeSelectedPlace = false
+        })
+
+        this.container.on('mousemove', e => {
+            if (this.isSelectingPlace && !this.selectedPlaceIsMoving && !this.isResizeSelectedPlace) {
+                this.overrideEventListener(e)
+                this.setCoordinates(this.x1, e.clientX, this.y1, e.clientY)
+            }
+        })
+    }
+
+    createSelectedPlace() {
+        let el = `<div contenteditable="true" autofocus style='position: absolute; 
+                              display: flex; 
+                              flex-direction: row;
+                              justify-content: center;
+                              align-items: center;
+                              color: ${this.managePanel.selectedColor};
+                              font-size: ${this.managePanel.selectedSize + 'px'};
+                              font-style: ${this.managePanel.selectedBold};
+                              font-weight: ${this.managePanel.selectedBold};
+                              border: rgb(8,30,170) dashed 2px; 
+                              width: ${this.x2 > this.x1 ? this.x2 - this.x1 + 'px' : this.x1 - this.x2 + 'px'}; 
+                              height: ${this.y2 > this.y1 ? this.y2 - this.y1 + 'px' : this.y1 - this.y2 + 'px'};
+                              top: ${this.y1 < this.y2 ? this.y1 - this.containerY + 'px' : this.y2 - this.containerY + 'px'};
+                              left: ${this.x1 < this.x2 ? this.x1 - this.containerX + 'px' : this.x2 - this.containerX + 'px'};
+                              cursor: ${!this.selectedPlaceIsMoving ? 'grab !important' : 'grabbing !important'}'>Иван Иванов</div>`
+
+        let resizeHelpers = [
+            `<span class="resize_helper" data-id="1" style="top: ${this.y1 - this.containerY - 2 + 'px'};left: ${this.x1 - this.containerX - 4 + 'px'};cursor: crosshair;"></span>`,
+            `<span class="resize_helper" data-id="2" style="top: ${this.y1 - this.containerY - 2 + 'px'};left: ${this.x2 - this.containerX - 4 + 'px'};cursor: crosshair"></span>`,
+            `<span class="resize_helper" data-id="3" style="top: ${this.y2 - this.containerY - 2 + 'px'};left: ${this.x2 - this.containerX - 4 + 'px'};cursor: crosshair;"></span>`,
+            `<span class="resize_helper" data-id="4" style="top: ${this.y2 - this.containerY - 2 + 'px'};left: ${this.x1 - this.containerX - 4 + 'px'};cursor: crosshair"></span>`,
+        ]
+
+        this.container.html(this.container.html() + el)
+
+        for (let i = 0; i < resizeHelpers.length; i++) this.container.html(this.container.html() + resizeHelpers[i])
+
+        this.container.find('span').on('mousedown', e => {
+            this.overrideEventListener(e)
+            this.isResizeSelectedPlace = true
+        })
+
+        this.container.find('span').on('mousemove', e => {
+            if (this.isResizeSelectedPlace && !this.selectedPlaceIsMoving) {
+                this.overrideEventListener(e)
+                let $this = $(e.currentTarget)
+                if ($this.attr('data-id').toString() === '1') {
+                    this.setCoordinates(e.clientX, this.x2, e.clientY, this.y2)
+                } else if ($this.attr('data-id').toString() === '2') {
+                    this.setCoordinates(this.x1, e.clientX, e.clientY, this.y2)
+                } else if ($this.attr('data-id').toString() === '3') {
+                    this.setCoordinates(this.x1, e.clientX, this.y1, e.clientY)
+                } else if ($this.attr('data-id').toString() === '4') {
+                    this.setCoordinates(e.clientX, this.x2, this.y1, e.clientY)
+                }
+            }
+        })
+
+        this.container.find('span').on('mouseup', e => {
+            this.overrideEventListener(e)
+            this.isResizeSelectedPlace = false
+        })
+
+        this.setSelectedPlaceActionListeners()
+
+        this.managePanel.rerender = () => {
+            this.container.find('div').remove()
+            this.container.find('span').remove()
+
+            this.createSelectedPlace()
+        }
+    }
+
+    getSelectedPlace() {
+        return this.container.find('div')
+    }
+
+    removeSelectedPlace() {
+        this.container.find('div').remove()
+        this.container.find('span').remove()
+    }
+
+    checkSelectedPlace() {
+        return !!this.container.find('aside')[0]
+    }
+
+    rerenderSelectedPlace() {
+        this.removeSelectedPlace()
+        this.createSelectedPlace()
+    }
+
+    setCoordinates(x1, x2, y1, y2) {
+        this.x1 = x1
+        this.x2 = x2
+        this.y1 = y1
+        this.y2 = y2
+
+        this.rerenderSelectedPlace()
+    }
+
+    setSelectedPlaceActionListeners() {
+        let s = $(this.getSelectedPlace())
+
+        document.addEventListener('keydown', e => {
+            if (e.code === 'Delete') this.removeSelectedPlace()
+        })
+
+        s.on('mousedown', e => {
+            this.overrideEventListener(e)
+            this.selectedPlaceIsMoving = true
+
+            this.currentX = e.clientX
+            this.currentY = e.clientY
+        })
+
+        s.on('mousemove', e => {
+            if (this.selectedPlaceIsMoving && !this.isSelectingPlace) {
+                this.overrideEventListener(e)
+
+                let x = this.currentX,
+                    y = this.currentY
+
+                this.x1 += e.clientX - x
+                this.x2 += e.clientX - x
+                this.y1 += e.clientY - y
+                this.y2 += e.clientY - y
+
+                this.rerenderSelectedPlace()
+
+                this.currentX = e.clientX
+                this.currentY = e.clientY
+            }
+        })
+
+        s.on('mouseup', () => {
+            this.selectedPlaceIsMoving = false
+            this.rerenderSelectedPlace()
+        })
+    }
+
+    setData() {
+        this.data = {
+            x1: this.x1 - this.containerX,
+            x2: this.x2 - this.containerX,
+            y1: this.y1 - this.containerY,
+            y2: this.y2 - this.containerY,
+            ...this.managePanel.data
+        }
+
+        this.hd.setData(this.data)
+    }
+
+    overrideEventListener(e) {
+        e.preventDefault()
+        e.stopPropagation()
+    }
+}
+
+class DiplomaEditorManagePanel {
+    constructor(container, mainContainer, rerender) {
+        this.container = container
+        this.mainContainer = mainContainer
+
+        this.fontParams = {
+            Size: [8, 10, 12, 14, 16, 18, 20, 28, 56, 72, 92],
+            Family: [],
+            Bold: ['auto', 'italic', 'bold'],
+        }
+
+        this.fontColorParam = $('[data-param="fontColor"]')
+        this.fontSizeParam = $('[data-param="fontSize"]')
+        this.fontBoldParam = $('[data-param="fontBold"]')
+
+        this.selectedColor = window.history.state.selectedColor
+        this.selectedSize = window.history.state.selectedSize
+        this.selectedBold = window.history.state.selectedBold
+        this.selectedTemplate = window.history.state.selectedTemplate
+
+        this.rerender = rerender
+
+        this.data = {
+            selectedColor: this.selectedColor,
+            selectedSize: this.selectedSize,
+            selectedBold: this.selectedBold,
+            selectedTemplate: window.history.state.selectedTemplate,
+        }
+    }
+
+    init() {
+        this.setData()
+
+        $('[data-action="main"]').append(this.container)
+        this.container = $('[data-action="main"]').find('section')
+
+        this.fontColorParam = $('[data-param="fontColor"]')
+        this.fontSizeParam = $('[data-param="fontSize"]')
+        this.fontBoldParam = $('[data-param="fontBold"]')
+
+        this.fontSizeParam.val(this.selectedSize || 16)
+        this.fontColorParam.val(this.selectedColor || "#000000")
+
+        let fp = this.fontParams
+        for (let i = 0; i < fp.Bold.length; i++) this.fontBoldParam.html(this.fontBoldParam.html() + `<option value="${fp.Bold[i]}">${fp.Bold[i]}</option>`)
+
+        let cP = $(`option[value=${this.selectedBold || '16px'}]`)
+        cP.prop('selected', true)
+
+        this.container.css({width: this.mainContainer[0].clientWidth + 'px'})
+        this.setActionListeners()
+    }
+
+    setActionListeners() {
+        this.fontColorParam.on('change', e => {
+            this.overrideEventListener(e)
+            this.selectedColor = $(e.currentTarget).val()
+            this.setEventData()
+        })
+
+        this.fontSizeParam.on('change', e => {
+            this.overrideEventListener(e)
+            this.selectedSize = e.currentTarget.value
+            this.setEventData()
+        })
+
+        this.fontBoldParam.on('change', e => {
+            this.overrideEventListener(e)
+            this.selectedBold = e.currentTarget.value
+            this.setEventData()
+        })
+    }
+
+    setEventData() {
+        this.setData()
+        this.rerender()
+    }
+
+    setData() {
+        this.data = {
+            selectedColor: this.selectedColor,
+            selectedSize: this.selectedSize,
+            selectedBold: this.selectedBold,
+            selectedTemplate: this.selectedTemplate,
+        }
+    }
+
+    overrideEventListener(e) {
+        e.stopPropagation()
+        e.preventDefault()
+    }
+}
+
+const mP = '<section data-action="editor_panel" class="editor_panel" style="display: flex; flex-direction: row; z-index: 1000;"><div class="editor_panel__font_params">\n' +
+    '            <label style="margin-bottom: 5px;">Параметры текста</label>\n' +
+    '            <input class="editor_panel__font_params__item" style="width: 100%;" type="number" step="2" min="8" max="92"\n' +
+    '                   value="16" data-param="fontSize">\n' +
+    '            <input class="editor_panel__font_params__item" style="width: 100%;" type="color" data-param="fontColor">\n' +
+    '            <select class="editor_panel__font_params__item" style="width: 100%;" data-param="fontBold">\n' +
+    '                <option value="16px">Стиль шрифта</option>\n' +
+    '            </select>\n' +
+    '        </div></section>'
