@@ -1,4 +1,4 @@
-class PreviewGenerateDiploma {
+class PreviewGenerateDiploma{
     constructor() {
         this.container = '<section class="select_diplomas_container"></section>'
 
@@ -6,8 +6,6 @@ class PreviewGenerateDiploma {
     }
 
     init() {
-        console.log(this.data)
-
         const d = {
             image: baseURI + this.data['selectedTemplate'],
             text: "Иван Иванов",

@@ -1,8 +1,8 @@
 class DiplomaEditor {
-    constructor(container, diploma) {
+    constructor(container) {
         // containers and image src
-        this.container = $('<section data-action="edit_diploma" class="editor_container"></section>')
-        this.diploma = diploma || window.history.state.selectedTemplate
+        this.container = $(container)
+        this.diploma = window.history.state.selectedTemplate
 
         // container coordinates
         this.containerX = 0
@@ -34,11 +34,16 @@ class DiplomaEditor {
     }
 
     init() {
+        if (!this.getSelectedPlace()) {
+            $('[data-type="next"]').prop('disabled', true)
+        } else {
+            $('[data-type="next"]').prop('disabled', false)
+        }
         this.hd.init()
         this.hd.next = () => {
             this.setData()
             let s = parseInt(new URLSearchParams(location.search).get('step')) + 1
-            window.history.pushState({step: s, ...this.data}, document.title, '?step=' + s)
+            window.history.pushState({step: s, ...this.data}, document.title, '?action=edit&step=' + s)
             $('[data-action="main"] section').remove()
             this.hd.setContent()
         }
@@ -55,7 +60,7 @@ class DiplomaEditor {
         this.x1 && this.x2 && this.rerenderSelectedPlace()
     }
 
-    setActionListeners() {
+    setEventListeners() {
         window.onscroll = e => {
             this.containerY = this.container[0].offsetTop - window.scrollY
         }
@@ -89,12 +94,11 @@ class DiplomaEditor {
         let el = `<div contenteditable="true" autofocus style='position: absolute; 
                               display: flex; 
                               flex-direction: row;
-                              justify-content: center;
-                              align-items: center;
                               color: ${this.managePanel.selectedColor};
                               font-size: ${this.managePanel.selectedSize + 'px'};
                               font-style: ${this.managePanel.selectedBold};
                               font-weight: ${this.managePanel.selectedBold};
+                              font-family: Roboto;
                               border: rgb(8,30,170) dashed 2px; 
                               width: ${this.x2 > this.x1 ? this.x2 - this.x1 + 'px' : this.x1 - this.x2 + 'px'}; 
                               height: ${this.y2 > this.y1 ? this.y2 - this.y1 + 'px' : this.y1 - this.y2 + 'px'};
@@ -103,7 +107,7 @@ class DiplomaEditor {
                               cursor: ${!this.selectedPlaceIsMoving ? 'grab !important' : 'grabbing !important'}'>Иван Иванов</div>`
 
         let resizeHelpers = [
-            `<span class="resize_helper" data-id="1" style="top: ${this.y1 - this.containerY - 2 + 'px'};left: ${this.x1 - this.containerX - 4 + 'px'};cursor: crosshair;"></span>`,
+            `<span class="main_resize_helper" data-id="1" style="top: ${this.y1 - this.containerY - 2 + 'px'};left: ${this.x1 - this.containerX - 4 + 'px'};cursor: crosshair; border: rgb(229,36,36) solid 2px;"></span>`,
             `<span class="resize_helper" data-id="2" style="top: ${this.y1 - this.containerY - 2 + 'px'};left: ${this.x2 - this.containerX - 4 + 'px'};cursor: crosshair"></span>`,
             `<span class="resize_helper" data-id="3" style="top: ${this.y2 - this.containerY - 2 + 'px'};left: ${this.x2 - this.containerX - 4 + 'px'};cursor: crosshair;"></span>`,
             `<span class="resize_helper" data-id="4" style="top: ${this.y2 - this.containerY - 2 + 'px'};left: ${this.x1 - this.containerX - 4 + 'px'};cursor: crosshair"></span>`,
@@ -150,7 +154,7 @@ class DiplomaEditor {
     }
 
     getSelectedPlace() {
-        return this.container.find('div')
+        return this.container.find('div')[0]
     }
 
     removeSelectedPlace() {
@@ -165,6 +169,7 @@ class DiplomaEditor {
     rerenderSelectedPlace() {
         this.removeSelectedPlace()
         this.createSelectedPlace()
+        $('[data-type="next"]').prop('disabled', false)
     }
 
     setCoordinates(x1, x2, y1, y2) {
@@ -254,6 +259,8 @@ class DiplomaEditorManagePanel {
         this.selectedBold = window.history.state.selectedBold
         this.selectedTemplate = window.history.state.selectedTemplate
 
+        this.file = null
+
         this.rerender = rerender
 
         this.data = {
@@ -261,6 +268,7 @@ class DiplomaEditorManagePanel {
             selectedSize: this.selectedSize,
             selectedBold: this.selectedBold,
             selectedTemplate: window.history.state.selectedTemplate,
+            file: this.file,
         }
     }
 
@@ -305,6 +313,25 @@ class DiplomaEditorManagePanel {
             this.selectedBold = e.currentTarget.value
             this.setEventData()
         })
+
+        $('[data-action="chooseFile"]').on('click', e => {
+            $('[data-action="fileInput"]').click()
+        })
+
+        $('[data-action="fileInput"]').on('change', e => {
+            let fd = new FormData()
+            let f = e.currentTarget.files
+            for (let i = 0; i < f.length; i++) {
+                if (f[i]) {
+                    fd.append('file', f[i])
+                    this.file = f[i]
+                    this.setData()
+                    $('[data-action="chooseFile"]').html(f[i].name)
+                } else {
+                    console.error("File is undefined.")
+                }
+            }
+        })
     }
 
     setEventData() {
@@ -318,6 +345,7 @@ class DiplomaEditorManagePanel {
             selectedSize: this.selectedSize,
             selectedBold: this.selectedBold,
             selectedTemplate: this.selectedTemplate,
+            file: this.file,
         }
     }
 
@@ -327,12 +355,22 @@ class DiplomaEditorManagePanel {
     }
 }
 
-const mP = '<section data-action="editor_panel" class="editor_panel" style="display: flex; flex-direction: row; z-index: 1000;"><div class="editor_panel__font_params">\n' +
-    '            <label style="margin-bottom: 5px;">Параметры текста</label>\n' +
-    '            <input class="editor_panel__font_params__item" style="width: 100%;" type="number" step="2" min="8" max="92"\n' +
-    '                   value="16" data-param="fontSize">\n' +
-    '            <input class="editor_panel__font_params__item" style="width: 100%;" type="color" data-param="fontColor">\n' +
-    '            <select class="editor_panel__font_params__item" style="width: 100%;" data-param="fontBold">\n' +
-    '                <option value="16px">Стиль шрифта</option>\n' +
-    '            </select>\n' +
-    '        </div></section>'
+const mP = '' +
+    '<section data-action="editor_panel" class="editor_panel" style="display: flex; flex-direction: row; z-index: 1000;">' +
+    '    <div class="editor_panel__params">' +
+    '        <label style="margin-bottom: 5px;">Параметры текста</label>' +
+    '        <input class="editor_panel__params__item" style="width: 100%;" type="number" step="2" min="8" max="92"' +
+    '               value="16" data-param="fontSize">' +
+    '        <input class="editor_panel__params__item" style="width: 100%;" type="color" data-param="fontColor">' +
+    '        <select class="editor_panel__params__item" style="width: 100%;" data-param="fontBold">' +
+    '            <option value="16px">Стиль шрифта</option>' +
+    '        </select>' +
+    '    </div>' +
+    '    <div class="editor_panel__params">' +
+    '        <label style="margin-bottom: 5px; align-items: center">Excel файл</label>' +
+    '        <input data-action="fileInput" class="editor_panel__params__item" style="width: 130px; display: none;" type="file" value="16" data-param="excelFile">' +
+    '        <button data-action="chooseFile" class="btn_default">Загрузить</button>' +
+    '        <input placeholder="Столбец с ФИ" class="editor_panel__params__item" style="width: 130px;" data-param="excelFilePersonNameCol">' +
+    '        <input placeholder="Столбец с событием" class="editor_panel__params__item" style="width: 130px;" data-param="excelFileActionCol">' +
+    '    </div>' +
+    '</section>'

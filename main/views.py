@@ -30,6 +30,21 @@ def get_diplomas_templates(request):
     })
 
 
+def upload_templates(request):
+    if request.method == 'GET':
+        return JsonResponse({})
+
+    elif request.method == 'POST':
+        return JsonResponse({})
+
+    return JsonResponse({'result': False, 'message': 'Method not allowed.'})
+
+
+def upload_excel(request):
+    f = request.FILES
+
+
+
 def generate_diploma(request):
     if request.method == 'GET':
         d = request.GET

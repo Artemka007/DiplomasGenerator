@@ -1,9 +1,11 @@
 class HistoryDirections {
-    constructor(data) {
+    constructor(data, url) {
         this.data = data
 
         this.nextButton = $('[data-type="next"]')
         this.previousButton = $('[data-type="previous"]')
+
+        this.url = url
     }
 
     init() {
@@ -12,7 +14,7 @@ class HistoryDirections {
 
     next() {
         let s = parseInt(new URLSearchParams(location.search).get('step')) + 1
-        window.history.pushState({step: s, ...this.data}, document.title, '?step=' + s)
+        window.history.pushState({step: s, ...this.data}, document.title, this.url || '?action=edit&step=' + s)
         $('[data-action="main"] section').remove()
         this.setContent()
     }
@@ -24,19 +26,50 @@ class HistoryDirections {
 
     setContent() {
         if (location.pathname === '/editor/') {
-            if (new URLSearchParams(location.search).get('step') === '1') {
-                $('[data-type="previous"]').prop('disabled', true)
-                const t = new ChooseDiplomaTemplate('<section class="select_diplomas_container"></section>')
-                t.init()
-            } else if (new URLSearchParams(location.search).get('step') === '2') {
-                $('[data-type="previous"]').prop('disabled', false)
-                const de = new DiplomaEditor($('[data-action="edit_diploma"]'))
-                de.init()
-                de.setActionListeners()
-            } else if (new URLSearchParams(location.search).get('step') === '3') {
-                $('[data-type="next"]').prop('disabled', true)
-                const pgd = new PreviewGenerateDiploma()
-                pgd.init()
+            const s = new URLSearchParams(location.search)
+            if (s.get('action') === 'edit') {
+                switch (s.get('step')) {
+                    case '1': {
+                        $('[data-type="previous"]').prop('disabled', true)
+                        const t = new ChooseDiplomaTemplate('<section class="select_diplomas_container"></section>')
+                        t.init()
+                        break
+                    }
+
+                    case '2': {
+                        $('[data-type="previous"]').prop('disabled', false)
+                        const de = new DiplomaEditor('<section data-action="edit_diploma" class="editor_container"></section>')
+                        de.init()
+                        de.setEventListeners()
+                        break
+                    }
+
+                    case '3': {
+                        $('[data-type="next"]').html("Завершить<i class=\"bi bi-check-lg\"></i>")
+                        const pgd = new PreviewGenerateDiploma()
+                        pgd.init()
+                        break
+                    }
+
+                    default:
+                        break
+                }
+            }
+            else if (s.get('action') === 'upload') {
+                switch (s.get('obj')) {
+                    case 'template': {
+                        let ut = new UploadTemplates('<section class="editor_container"></section>')
+                        ut.init()
+                        break
+                    }
+
+                    case 'excel': {
+                        break
+                    }
+
+                    default:
+                        break
+                }
             }
         }
     }

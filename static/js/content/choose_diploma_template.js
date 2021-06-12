@@ -5,9 +5,11 @@ class ChooseDiplomaTemplate {
         this.templates = []
 
         this.selectedTemplate = window.history.state.selectedTemplate
+        this.prevData = window.history.state
 
         this.data = {
-            selectedTemplate: this.selectedTemplate
+            selectedTemplate: this.selectedTemplate,
+            ...this.prevData,
         }
 
         this.hd = new HistoryDirections(this.data)
@@ -21,6 +23,7 @@ class ChooseDiplomaTemplate {
         let m = $('[data-action="main"]').append(this.container)
 
         this.container = $(m.find('section'))
+        $('[data-type="next"]').prop('disabled', false)
 
         API.getTemplates().then(res => {
             if (res.result) {
@@ -63,7 +66,8 @@ class ChooseDiplomaTemplate {
 
     setData() {
         this.data = {
-            selectedTemplate: this.selectedTemplate
+            selectedTemplate: this.selectedTemplate,
+            ...this.prevData
         }
         this.hd.setData(this.data)
     }

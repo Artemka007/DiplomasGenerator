@@ -7,7 +7,8 @@
     height: fit-content;
 }
 
-.resize_helper {
+.resize_helper,
+.main_resize_helper {
     position: absolute;
     display: flex;
     width: 6px;
@@ -19,6 +20,10 @@
 
 .resize_helper:hover {
     background: rgb(36, 62, 229);
+}
+
+.main_resize_helper:hover {
+    background: rgb(229,36,36);
 }
 
 .editor_panel {
@@ -35,14 +40,14 @@
 .editor_panel option:hover {
 }
 
-.editor_panel__font_params {
+.editor_panel__params {
     display: flex;
     flex-direction: column;
     padding: 10px;
     border-right: rgb(19, 52, 215) solid 1px;
 }
 
-.editor_panel__font_params__item {
+.editor_panel__params__item {
     display: flex;
     flex-direction: row;
     align-items: center;

@@ -1,22 +1,3 @@
-function getCookie(name) {
-    let cookieValue = null;
-
-    if (document.cookie && document.cookie !== '') {
-        let cookies = document.cookie.split(';');
-
-        for (let i = 0; i < cookies.length; i++) {
-            let cookie = jQuery.trim(cookies[i]);
-
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-
-    return cookieValue;
-}
-
 const API = {
     getTemplates: function () {
         return $.get('/templates/')
@@ -27,6 +8,15 @@ const API = {
             method: 'GET',
             data: data,
             dataType: 'json',
+        })
+    },
+
+    uploadExcel: function (file) {
+        let fd = new FormData()
+        fd.append('excel', file)
+
+        return $.ajax('/upload/excel/', {
+            data: fd
         })
     }
 }
