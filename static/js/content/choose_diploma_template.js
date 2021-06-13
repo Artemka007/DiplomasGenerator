@@ -16,7 +16,15 @@ class ChooseDiplomaTemplate {
     }
 
     init() {
+        console.log(this.prevData)
+
         this.hd.init()
+        if(this.prevData.selectedTemplate) {
+            this.hd.next = () => {
+                $('[data-action="main"] section').remove()
+                window.history.forward()
+            }
+        }
 
         $('[data-action="main"] section').remove()
 

@@ -1,13 +1,25 @@
+import io
+import json
+import urllib.request
+import zipfile
+
+from PIL import Image
+from django.core.files.base import ContentFile, File
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation.trans_null import gettext_lazy as _
 
 from main.diplomas_generator import generate_image
-from main.forms import GeneratedDiplomasForm
-from main.models import DiplomaTemplate, GeneratedDiplomas
+from main.forms import GeneratedDiplomasForm, SaveExcel
+from main.models import DiplomaTemplate, GeneratedDiplomas, ExcelForGenerate, ZipFile
 from main.serializers import DiplomaSerializer
+from .support import *
 
+from openpyxl import load_workbook
+
+
+# TODO: add authentication
 
 def index(request):
     return render(request, 'index.html')
@@ -25,7 +37,7 @@ def get_diplomas_templates(request):
     templates = DiplomaTemplate.objects.all()
     return JsonResponse({
         'result': True,
-        'message': _('Templates returned.'),
+        'message': _('Templates were returned.'),
         'templates': DiplomaSerializer(templates, many=True).data
     })
 
@@ -37,39 +49,65 @@ def upload_templates(request):
     elif request.method == 'POST':
         return JsonResponse({})
 
-    return JsonResponse({'result': False, 'message': 'Method not allowed.'})
-
-
-def upload_excel(request):
-    f = request.FILES
-
+    return JsonResponse({'result': False, 'message': _('Method not allowed.')})
 
 
 def generate_diploma(request):
     if request.method == 'GET':
-        d = request.GET
-        img = generate_image(d.get('image'), d.get('text'), d.get('x'), d.get('y'), d.get('bold'), d.get('size'),
-                             d.get('color'))
-        diploma = GeneratedDiplomasForm()
-        diploma.generated_diploma = img
-        diploma.instance.generated_diploma.save(img.name, InMemoryUploadedFile(
-            img,
-            None,
-            img.name,
-            'image/*',
-            img.tell,
-            None
-        ))
-        if diploma.is_valid():
-            diploma.save()
+        names = json.loads(request.GET.get('names'))
+        if len(names) > 1:
+            buffer = io.BytesIO()
+            zip_file = zipfile.ZipFile(buffer, 'w')
+
+            for i in names:
+                b = io.BytesIO()
+
+                path = generate_img(request, i, True)
+                image = Image.open(path)
+                image.save(b, format='PNG')
+
+                b.seek(0)
+
+                zip_file.writestr(path.split('\\')[-1], b.read())
+
+            zip_file.close()
+
+            f = ZipFile.objects.create(file=InMemoryUploadedFile(buffer, None, "TestZip.zip", 'application/zip', buffer.tell, None))
+            f.save()
+
+            return JsonResponse({'result': True, 'message': 'True', 'url': f.file.url})
+        url = generate_img(request, json.loads(request.GET.get('names'))[0], True)
+        return JsonResponse({
+            'result': True,
+            'message': _('Images was generated.'),
+            'url': url
+        })
+
+    elif request.method == 'POST':
+        names = []
+
+        excel = ExcelForGenerate(file=request.FILES.get('file'))
+        try:
+            excel.save()
+        except Exception as e:
             return JsonResponse({
-                'result': True,
-                'message': _('Image was returned.'),
-                'url': diploma.instance.generated_diploma
+                'result': False,
+                'message': _('Something was wrong... Please, try again'),
+                'errors': e.__str__(),
             })
-        else:
-            return JsonResponse({
-                'result': True,
-                'message': _('Image was returned.'),
-                'url': diploma.instance.generated_diploma.url
-            })
+
+        wb_obj = load_workbook(excel.file.path)
+
+        sheet_obj = wb_obj.active
+
+        max_row = sheet_obj.max_row
+
+        for i in range(2, max_row + 1):
+            cell = sheet_obj.cell(i, 1)
+            names.append(cell.value)
+
+        return JsonResponse({
+            'result': True,
+            'message': _('Diplomas generated.'),
+            'names': names,
+        })

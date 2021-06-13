@@ -1,12 +1,12 @@
 import io
 import os.path
+import random
+import string
 
-import cv2 as cv
 import urllib.request
 
 from PIL import Image, ImageDraw, ImageFont
 from django.conf import settings
-from django.core.files import File
 from django.core.files.base import ContentFile
 
 
@@ -35,9 +35,8 @@ def generate_image(image, text, x, y, bold, scale, color):
     im = io.BytesIO()
 
     img.save(im, img.format)
+    ran = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
 
-    new_image = ContentFile(im.getvalue(), name='GeneratedDiploma_' + image.split('/')[-1].split('.')[0] + '_' + text + '.jpg')
-
-    print(new_image)
+    new_image = ContentFile(im.getvalue(), name='GeneratedDiploma_' + image.split('/')[-1].split('.')[0] + '_' + ran + '.jpg')
 
     return new_image

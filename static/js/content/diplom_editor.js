@@ -319,18 +319,11 @@ class DiplomaEditorManagePanel {
         })
 
         $('[data-action="fileInput"]').on('change', e => {
-            let fd = new FormData()
+            this.fd = new FormData()
             let f = e.currentTarget.files
-            for (let i = 0; i < f.length; i++) {
-                if (f[i]) {
-                    fd.append('file', f[i])
-                    this.file = f[i]
-                    this.setData()
-                    $('[data-action="chooseFile"]').html(f[i].name)
-                } else {
-                    console.error("File is undefined.")
-                }
-            }
+            this.file = f[0]
+            this.setData()
+            $('[data-action="chooseFile"]').html(f[0].name)
         })
     }
 
@@ -370,7 +363,5 @@ const mP = '' +
     '        <label style="margin-bottom: 5px; align-items: center">Excel файл</label>' +
     '        <input data-action="fileInput" class="editor_panel__params__item" style="width: 130px; display: none;" type="file" value="16" data-param="excelFile">' +
     '        <button data-action="chooseFile" class="btn_default">Загрузить</button>' +
-    '        <input placeholder="Столбец с ФИ" class="editor_panel__params__item" style="width: 130px;" data-param="excelFilePersonNameCol">' +
-    '        <input placeholder="Столбец с событием" class="editor_panel__params__item" style="width: 130px;" data-param="excelFileActionCol">' +
     '    </div>' +
     '</section>'
