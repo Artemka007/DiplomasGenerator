@@ -6,6 +6,7 @@ $(function () {
     $('[data-type="previous"]').prop('disabled', true)
     hd.setContent()
     window.onpopstate = e => {
+        $('[data-action="main"]').find('section').remove()
         hd.setContent()
     }
 })

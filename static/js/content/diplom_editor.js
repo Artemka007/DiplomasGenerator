@@ -13,12 +13,15 @@ class DiplomaEditor {
         this.x2 = window.history.state.x2
         this.y1 = window.history.state.y1
         this.y2 = window.history.state.y2
+        this.resultX = window.history.state.resultX
 
         this.data = {
             x1: window.history.state.x1,
             x2: window.history.state.x2,
             y1: window.history.state.y1,
             y2: window.history.state.y2,
+            resultX: window.history.state.resultX,
+
         }
 
         this.hd = new HistoryDirections(this.data)
@@ -43,21 +46,29 @@ class DiplomaEditor {
         this.hd.next = () => {
             this.setData()
             let s = parseInt(new URLSearchParams(location.search).get('step')) + 1
-            window.history.pushState({step: s, ...this.data}, document.title, '?action=edit&step=' + s)
+            window.history.pushState({step: s, ...this.data}, document.title, this.hd.url || '?action=edit&step=' + s)
             $('[data-action="main"] section').remove()
             this.hd.setContent()
         }
+        this.hd.previous = () => {
+            this.setData()
+            let s = parseInt(new URLSearchParams(location.search).get('step')) - 1
+            window.history.pushState({step: s, ...this.data}, document.title, this.hd.url || '?action=edit&step=' + s)
+            $('[data-action="main"] section').remove()
+            this.hd.setContent()
+        }
+        this.hd.setEventListeners()
         $('[data-action="main"]').append(this.container)
         this.container.html(this.container.html() + `<img src="${this.diploma}" alt=""/>`)
         this.managePanel = new DiplomaEditorManagePanel(mP, this.container)
+        this.managePanel.init()
+        this.container.css({'margin-top': '250px'})
         this.container.find('img').on('load', e => {
-            let left = window.innerWidth / 2 - this.container[0].clientWidth / 2
-            this.container.css({'top': 300, 'left': left - 8})
-            this.managePanel.init()
             this.containerX = this.container[0].offsetLeft
             this.containerY = this.container[0].offsetTop - window.scrollY
         })
-        this.x1 && this.x2 && this.rerenderSelectedPlace()
+
+        this.x1 && this.x2 && this.createSelectedPlace()
     }
 
     setEventListeners() {
@@ -91,9 +102,10 @@ class DiplomaEditor {
     }
 
     createSelectedPlace() {
-        let el = `<div contenteditable="true" autofocus style='position: absolute; 
+        let el = `<div data-action="resize-container" style='position: absolute; 
                               display: flex; 
                               flex-direction: row;
+                              justify-content: center;
                               color: ${this.managePanel.selectedColor};
                               font-size: ${this.managePanel.selectedSize + 'px'};
                               font-style: ${this.managePanel.selectedBold};
@@ -104,13 +116,13 @@ class DiplomaEditor {
                               height: ${this.y2 > this.y1 ? this.y2 - this.y1 + 'px' : this.y1 - this.y2 + 'px'};
                               top: ${this.y1 < this.y2 ? this.y1 - this.containerY + 'px' : this.y2 - this.containerY + 'px'};
                               left: ${this.x1 < this.x2 ? this.x1 - this.containerX + 'px' : this.x2 - this.containerX + 'px'};
-                              cursor: ${!this.selectedPlaceIsMoving ? 'grab !important' : 'grabbing !important'}'>Иван Иванов</div>`
+                              cursor: ${!this.selectedPlaceIsMoving ? 'grab !important' : 'grabbing !important'}'><div data-action="name-container">Иван Иванов</div></div>`
 
         let resizeHelpers = [
-            `<span class="main_resize_helper" data-id="1" style="top: ${this.y1 - this.containerY - 2 + 'px'};left: ${this.x1 - this.containerX - 4 + 'px'};cursor: crosshair; border: rgb(229,36,36) solid 2px;"></span>`,
-            `<span class="resize_helper" data-id="2" style="top: ${this.y1 - this.containerY - 2 + 'px'};left: ${this.x2 - this.containerX - 4 + 'px'};cursor: crosshair"></span>`,
-            `<span class="resize_helper" data-id="3" style="top: ${this.y2 - this.containerY - 2 + 'px'};left: ${this.x2 - this.containerX - 4 + 'px'};cursor: crosshair;"></span>`,
-            `<span class="resize_helper" data-id="4" style="top: ${this.y2 - this.containerY - 2 + 'px'};left: ${this.x1 - this.containerX - 4 + 'px'};cursor: crosshair"></span>`,
+            `<span class="resize_helper" data-id="1" style="top: ${this.y1 - this.containerY - 2 + 'px'};left: ${this.x1 - this.containerX - 4 + 'px'};"></span>`,
+            `<span class="resize_helper" data-id="2" style="top: ${this.y1 - this.containerY - 2 + 'px'};left: ${this.x2 - this.containerX - 4 + 'px'};"></span>`,
+            `<span class="resize_helper" data-id="3" style="top: ${this.y2 - this.containerY - 2 + 'px'};left: ${this.x2 - this.containerX - 4 + 'px'};"></span>`,
+            `<span class="resize_helper" data-id="4" style="top: ${this.y2 - this.containerY - 2 + 'px'};left: ${this.x1 - this.containerX - 4 + 'px'};"></span>`,
         ]
 
         this.container.html(this.container.html() + el)
@@ -151,6 +163,9 @@ class DiplomaEditor {
 
             this.createSelectedPlace()
         }
+
+        this.resultX = this.x1 + ($('[data-action="resize-container"]').width() - $('[data-action="name-container"]').width()) / 2
+        console.log({resultX: this.resultX, x1: this.x1})
     }
 
     getSelectedPlace() {
@@ -223,8 +238,10 @@ class DiplomaEditor {
 
     setData() {
         this.data = {
+            selectedTemplate: window.history.state.selectedTemplate,
             x1: this.x1 - this.containerX,
             x2: this.x2 - this.containerX,
+            resultX: this.resultX - this.containerX,
             y1: this.y1 - this.containerY,
             y2: this.y2 - this.containerY,
             ...this.managePanel.data

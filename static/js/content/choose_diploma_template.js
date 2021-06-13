@@ -16,16 +16,6 @@ class ChooseDiplomaTemplate {
     }
 
     init() {
-        console.log(this.prevData)
-
-        this.hd.init()
-        if(this.prevData.selectedTemplate) {
-            this.hd.next = () => {
-                $('[data-action="main"] section').remove()
-                window.history.forward()
-            }
-        }
-
         $('[data-action="main"] section').remove()
 
         let m = $('[data-action="main"]').append(this.container)
@@ -34,13 +24,16 @@ class ChooseDiplomaTemplate {
         $('[data-type="next"]').prop('disabled', false)
 
         API.getTemplates().then(res => {
+            this.hd.init()
             if (res.result) {
                 this.templates = res.templates
                 this.drawingTemplates()
+                console.log(this.prevData)
             } else {
                 console.error(res.message)
             }
         })
+
     }
 
     setActionListeners() {
@@ -53,11 +46,12 @@ class ChooseDiplomaTemplate {
             this.overrideEventListener(e)
             $(e.currentTarget).css({background: 'rgba(0,0,0,0)'})
         })
+        el.off('click')
         el.on('click', e => {
             this.overrideEventListener(e)
             this.selectedTemplate = $(e.currentTarget).data('url')
-            this.drawingTemplates()
             this.setData()
+            this.drawingTemplates()
             window.history.replaceState({step: 1, ...this.data}, document.title, '')
         })
     }
@@ -73,10 +67,10 @@ class ChooseDiplomaTemplate {
     }
 
     setData() {
-        this.data = {
-            selectedTemplate: this.selectedTemplate,
-            ...this.prevData
-        }
+            console.log(this.selectedTemplate)
+        this.prevData.selectedTemplate = this.selectedTemplate
+        this.data = this.prevData
+        console.log({data: this.data.selectedTemplate})
         this.hd.setData(this.data)
     }
 

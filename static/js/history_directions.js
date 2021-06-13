@@ -20,8 +20,10 @@ class HistoryDirections {
     }
 
     previous() {
+        let s = parseInt(new URLSearchParams(location.search).get('step')) - 1
+        window.history.pushState({step: s, ...this.data}, document.title, this.url || '?action=edit&step=' + s)
         $('[data-action="main"] section').remove()
-        window.history.back()
+        this.setContent()
     }
 
     setContent() {

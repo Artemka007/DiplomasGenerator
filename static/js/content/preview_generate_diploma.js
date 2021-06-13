@@ -7,12 +7,14 @@ class PreviewGenerateDiploma {
         this.d = {
             image: baseURI + this.data['selectedTemplate'],
             names: JSON.stringify(["Иван Иванов"]),
-            x: this.data['x1'],
+            x: parseInt(this.data['resultX']),
             y: this.data['y1'],
             bold: this.data['selectedBold'],
             color: this.data['selectedColor'],
             size: this.data['selectedSize'],
         }
+
+        console.log(this.data['resultX'])
     }
 
     init() {

@@ -7,8 +7,7 @@
     height: fit-content;
 }
 
-.resize_helper,
-.main_resize_helper {
+.resize_helper {
     position: absolute;
     display: flex;
     width: 6px;
@@ -16,14 +15,11 @@
     border: rgb(36, 62, 229) solid 2px;
     background: #FFFFFF;
     border-radius: 100%;
+    cursor: crosshair;
 }
 
 .resize_helper:hover {
     background: rgb(36, 62, 229);
-}
-
-.main_resize_helper:hover {
-    background: rgb(229,36,36);
 }
 
 .editor_panel {

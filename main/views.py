@@ -76,7 +76,7 @@ def generate_diploma(request):
             f.save()
 
             return JsonResponse({'result': True, 'message': 'True', 'url': f.file.url})
-        url = generate_img(request, json.loads(request.GET.get('names'))[0], True)
+        url = generate_img(request, json.loads(request.GET.get('names'))[0], False)
         return JsonResponse({
             'result': True,
             'message': _('Images was generated.'),
