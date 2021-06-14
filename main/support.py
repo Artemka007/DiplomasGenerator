@@ -8,8 +8,6 @@ from main.forms import GeneratedDiplomasForm
 def generate_img(request, text, is_path):
     d = request.GET
 
-    print(text)
-
     img = generate_image(d.get('image'), text, d.get('x'), d.get('y'), d.get('bold'), d.get('size'),
                          d.get('color'))
     diploma = GeneratedDiplomasForm()

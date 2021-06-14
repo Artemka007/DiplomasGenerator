@@ -15,14 +15,7 @@ class DiplomaEditor {
         this.y2 = window.history.state.y2
         this.resultX = window.history.state.resultX
 
-        this.data = {
-            x1: window.history.state.x1,
-            x2: window.history.state.x2,
-            y1: window.history.state.y1,
-            y2: window.history.state.y2,
-            resultX: window.history.state.resultX,
-
-        }
+        this.data = {...window.history.state}
 
         this.hd = new HistoryDirections(this.data)
 
@@ -37,6 +30,7 @@ class DiplomaEditor {
     }
 
     init() {
+        $('[data-action="to_upload"]').remove()
         if (!this.getSelectedPlace()) {
             $('[data-type="next"]').prop('disabled', true)
         } else {
@@ -244,7 +238,8 @@ class DiplomaEditor {
             resultX: this.resultX - this.containerX,
             y1: this.y1 - this.containerY,
             y2: this.y2 - this.containerY,
-            ...this.managePanel.data
+            names: window.history.state.names,
+            ...this.managePanel.data,
         }
 
         this.hd.setData(this.data)

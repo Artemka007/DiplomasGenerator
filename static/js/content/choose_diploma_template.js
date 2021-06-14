@@ -18,7 +18,15 @@ class ChooseDiplomaTemplate {
     init() {
         $('[data-action="main"] section').remove()
 
-        let m = $('[data-action="main"]').append(this.container)
+        let m = $('[data-action="main"]')
+        $('[data-action="to_upload"]').remove()
+        m.append('<aside data-action="to_upload" class="select_diplomas_container">' +
+            '    <button data-action="upload_templates_btn" class="buttons_container_item">' +
+            '         <i class="bi bi-upload" style="margin-right: 10px;"></i>Загрузить шаблоны грамот' +
+            '    </button>' +
+            '</aside>'
+        )
+        m.append(this.container)
 
         this.container = $(m.find('section'))
         $('[data-type="next"]').prop('disabled', false)
@@ -54,6 +62,11 @@ class ChooseDiplomaTemplate {
             this.drawingTemplates()
             window.history.replaceState({step: 1, ...this.data}, document.title, '')
         })
+
+        $('[data-action="upload_templates_btn"]').on('click', e => {
+            let hd = new HistoryDirections({}, '?action=upload&obj=template')
+            hd.next()
+        })
     }
 
     drawingTemplates() {
@@ -67,7 +80,6 @@ class ChooseDiplomaTemplate {
     }
 
     setData() {
-            console.log(this.selectedTemplate)
         this.prevData.selectedTemplate = this.selectedTemplate
         this.data = this.prevData
         console.log({data: this.data.selectedTemplate})

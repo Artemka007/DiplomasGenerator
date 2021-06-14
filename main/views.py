@@ -1,23 +1,17 @@
 import io
 import json
-import urllib.request
 import zipfile
 
 from PIL import Image
-from django.core.files.base import ContentFile, File
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.translation.trans_null import gettext_lazy as _
 
-from main.diplomas_generator import generate_image
-from main.forms import GeneratedDiplomasForm, SaveExcel
-from main.models import DiplomaTemplate, GeneratedDiplomas, ExcelForGenerate, ZipFile
+from main.models import DiplomaTemplate, ExcelForGenerate, ZipFile
 from main.serializers import DiplomaSerializer
 from .support import *
 
 from openpyxl import load_workbook
-
 
 # TODO: add authentication
 
@@ -43,11 +37,20 @@ def get_diplomas_templates(request):
 
 
 def upload_templates(request):
-    if request.method == 'GET':
-        return JsonResponse({})
+    if request.method == 'POST':
+        f = request.FILES
+        dp = DiplomaTemplate.objects.create(diploma=f.get('file'))
+        try:
+            dp.save()
+        except Exception as e:
+            return JsonResponse({'result': False, 'message': _(e.__str__())})
+        return JsonResponse({'result': True, 'message': _('Template was saved.'), 'url': dp.diploma.url, 'id': dp.id})
 
-    elif request.method == 'POST':
-        return JsonResponse({})
+    elif request.method == 'DELETE':
+        id = request.GET.get('id')
+        dp = DiplomaTemplate.objects.get(pk=id)
+        dp.delete()
+        return JsonResponse({'result': True, 'message': _('Template delete successful.')})
 
     return JsonResponse({'result': False, 'message': _('Method not allowed.')})
 

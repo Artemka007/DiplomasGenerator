@@ -13,10 +13,18 @@ class HistoryDirections {
     }
 
     next() {
-        let s = parseInt(new URLSearchParams(location.search).get('step')) + 1
-        window.history.pushState({step: s, ...this.data}, document.title, this.url || '?action=edit&step=' + s)
-        $('[data-action="main"] section').remove()
-        this.setContent()
+        const step = new URLSearchParams(location.search).get('step')
+        if(step) {
+            let s = parseInt(step) + 1
+            window.history.pushState({step: s, ...this.data}, document.title, this.url || '?action=edit&step=' + s)
+            $('[data-action="main"] section').remove()
+            this.setContent()
+        }
+        else {
+            window.history.pushState({...this.data}, document.title, this.url)
+            $('[data-action="main"] section').remove()
+            this.setContent()
+        }
     }
 
     previous() {
@@ -60,12 +68,8 @@ class HistoryDirections {
             else if (s.get('action') === 'upload') {
                 switch (s.get('obj')) {
                     case 'template': {
-                        let ut = new UploadTemplates('<section class="editor_container"></section>')
+                        let ut = new UploadTemplates('<section class="select_diplomas_container"></section>')
                         ut.init()
-                        break
-                    }
-
-                    case 'excel': {
                         break
                     }
 

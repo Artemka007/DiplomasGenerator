@@ -59,7 +59,9 @@
     padding: 10px;
 }
 
-.buttons_container button {
+
+
+.buttons_container_item {
     padding: 7px 15px;
     color: #FFFFFF;
     background: linear-gradient(to bottom, rgb(23, 45, 255), rgb(23, 45, 255), rgb(23, 45, 255));
@@ -71,11 +73,11 @@
     cursor: pointer;
 }
 
-.buttons_container button:hover {
+.buttons_container_item:hover {
     background: linear-gradient(to bottom, rgb(38, 85, 255), rgb(10, 33, 248), rgb(12, 7, 222));
 }
 
-.buttons_container button:disabled {
+.buttons_container_item:disabled {
     background: rgb(45, 86, 234);
     cursor: not-allowed;
 }
@@ -86,9 +88,10 @@
     flex-wrap: wrap;
     background-color: #FFFFFF;
     padding: 10px;
-    box-shadow: rgba(0,0,0,0.25) 4px 4px 8px 0;
+    box-shadow: rgba(0,0,0,0.5) 4px 4px 20px 0;
     box-sizing: border-box;
     width: 100%;
+    margin-bottom: 20px;
 }
 
 .select_diploma_template {
