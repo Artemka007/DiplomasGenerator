@@ -19,7 +19,7 @@ class UploadTemplates {
         main.append(this.container)
         this.container = $(main.find('section'))
 
-        this.container.append('<section class="upload_container" style="font-size: 45px;"><span><i class="bi bi-upload" style="margin-right: 10px;"></i>Перетащите файл в контейнер</span></section>')
+        this.container.append('<section class="upload_container" style="font-size: 45px;"><span style="user-select: none;"><i class="bi bi-upload" style="margin-right: 10px;"></i>Перетащите файл в контейнер</span></section>')
 
         this.uploadContainer = $('.upload_container')
 
@@ -38,10 +38,15 @@ class UploadTemplates {
             console.log(e.originalEvent.dataTransfer.files)
             for (let i = 0; i < files.length; i++) {
                 if (files[i].type.split('/')[0] === 'image') {
-                    API.uploadTemplate(files[i]).then(res => {
+                    let data = new FormData()
+                    data.append('file', files[i])
+                    API.uploadTemplate(data, 'POST').then(res => {
                         this.container.append(`<section class="upload_image_container" style='background-image: url(${baseURI + res.url})' data-action="upload_files_item">
-                                                    <i data-id="${res.id}" class="bi bi-trash" style="font-size: 40px; color: rgba(0, 0, 0, 0.7);"></i>
+                                                    <button data-action="delete_upload_file" style="background: rgba(0,0,0,0);border: none;outline: none;cursor: pointer;"><i data-id="${res.id}" class="bi bi-trash" style="font-size: 40px; color: rgba(0, 0, 0, 0.7);"></i></button>
                                                </section>`)
+                    })
+                    $('[data-action="delete_upload_file"]').on('click', e => {
+                        API.uploadTemplate({id: $('[data-action="delete_upload_file"]').attr('data-id')}, 'DELETE')
                     })
                 }
                 else {

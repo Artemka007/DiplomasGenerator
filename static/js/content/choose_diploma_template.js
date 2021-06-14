@@ -46,14 +46,6 @@ class ChooseDiplomaTemplate {
 
     setActionListeners() {
         const el = $('.select_diploma_template')
-        const c = $('[data-action="select_diploma_actions"]')
-        c.mouseenter(e => {
-            this.overrideEventListener(e)
-            $(e.currentTarget).css({background: 'rgba(0,0,0,0.5)'})
-        }).mouseleave(e => {
-            this.overrideEventListener(e)
-            $(e.currentTarget).css({background: 'rgba(0,0,0,0)'})
-        })
         el.off('click')
         el.on('click', e => {
             this.overrideEventListener(e)

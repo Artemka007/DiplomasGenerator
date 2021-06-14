@@ -42,11 +42,9 @@ const API = {
         })
     },
 
-    uploadTemplate: function (file) {
-        let data = new FormData()
-        data.append('file', file)
+    uploadTemplate: function (data, method) {
         return $.ajax('/upload/', {
-            method: 'POST',
+            method: method,
             headers: { "X-CSRFToken": getCookie("csrftoken") },
             data: data,
             contentType: false,

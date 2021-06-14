@@ -66,18 +66,14 @@ class DiplomaEditor {
     }
 
     setEventListeners() {
-        window.onscroll = e => {
-            this.containerY = this.container[0].offsetTop - window.scrollY
-        }
-
         this.container.on('mousedown', e => {
             this.overrideEventListener(e)
             this.isSelectingPlace = true
             if (!this.checkSelectedPlace()) {
-                this.setCoordinates(e.clientX, e.clientX, e.clientY, e.clientY)
+                this.setCoordinates(e.clientX, e.clientX, e.clientY + window.scrollY, e.clientY + window.scrollY)
                 this.createSelectedPlace()
             } else if (!this.isResizeSelectedPlace) {
-                this.setCoordinates(this.x1, e.clientX, this.y1, e.clientY)
+                this.setCoordinates(this.x1, e.clientX, this.y1, e.clientY + window.scrollY)
                 this.rerenderSelectedPlace()
             }
         })
@@ -88,9 +84,9 @@ class DiplomaEditor {
         })
 
         this.container.on('mousemove', e => {
-            if (this.isSelectingPlace && !this.selectedPlaceIsMoving && !this.isResizeSelectedPlace) {
+            if (this.isSelectingPlace && !this.isResizeSelectedPlace && !this.selectedPlaceIsMoving ) {
                 this.overrideEventListener(e)
-                this.setCoordinates(this.x1, e.clientX, this.y1, e.clientY)
+                this.setCoordinates(this.x1, e.clientX, this.y1, e.clientY + window.scrollY)
             }
         })
     }
@@ -133,13 +129,13 @@ class DiplomaEditor {
                 this.overrideEventListener(e)
                 let $this = $(e.currentTarget)
                 if ($this.attr('data-id').toString() === '1') {
-                    this.setCoordinates(e.clientX, this.x2, e.clientY, this.y2)
+                    this.setCoordinates(e.clientX, this.x2, e.clientY + window.scrollY, this.y2)
                 } else if ($this.attr('data-id').toString() === '2') {
-                    this.setCoordinates(this.x1, e.clientX, e.clientY, this.y2)
+                    this.setCoordinates(this.x1, e.clientX, e.clientY + window.scrollY, this.y2)
                 } else if ($this.attr('data-id').toString() === '3') {
-                    this.setCoordinates(this.x1, e.clientX, this.y1, e.clientY)
+                    this.setCoordinates(this.x1, e.clientX, this.y1, e.clientY + window.scrollY)
                 } else if ($this.attr('data-id').toString() === '4') {
-                    this.setCoordinates(e.clientX, this.x2, this.y1, e.clientY)
+                    this.setCoordinates(e.clientX, this.x2, this.y1, e.clientY + window.scrollY)
                 }
             }
         })

@@ -103,6 +103,12 @@
     background-color: #979797;
     border-radius: 10px;
     border: #95d2f6 solid 2px;
-    width: 200px;
-    height: 200px;
+    width: 165px;
+    height: 165px;
+    transform-origin: center center;
+    transition: all .2s;
+}
+
+.select_diploma_template:hover {
+    transform: scale(1.4);
 }

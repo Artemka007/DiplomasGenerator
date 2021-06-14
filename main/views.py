@@ -47,7 +47,7 @@ def upload_templates(request):
         return JsonResponse({'result': True, 'message': _('Template was saved.'), 'url': dp.diploma.url, 'id': dp.id})
 
     elif request.method == 'DELETE':
-        id = request.GET.get('id')
+        id = request.POST.get('id')
         dp = DiplomaTemplate.objects.get(pk=id)
         dp.delete()
         return JsonResponse({'result': True, 'message': _('Template delete successful.')})
