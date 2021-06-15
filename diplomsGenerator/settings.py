@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-&g^wl%&q4fsnb(n#24r8-&*(t!s)&7+*7fjyx)=ghw0$r0ai)_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.103', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.2.153', '127.0.0.1']
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+    'account',
 ]
 
 MIDDLEWARE = [
@@ -117,6 +118,10 @@ USE_L10N = True
 
 USE_TZ = True
 
+# auth settings
+
+LOGIN_URL = '/account/sign_in/'
+LOGIN_REDIRECT_URL = '/editor/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

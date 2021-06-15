@@ -19,13 +19,13 @@ def generate_image(image, text, x, y, bold, scale, color):
 
     img = Image.open(path)
 
-    f = 'fonts/Roboto-Regular.ttf'
+    f = 'fonts/Arial/Arial.ttf'
 
     if bold == 'italic':
-        f = 'fonts/Roboto-Italic.ttf'
+        f = 'fonts/Arial/Arial-Italic.ttf'
 
     elif bold == 'bold':
-        f = 'fonts/Roboto-Bold.ttf'
+        f = 'fonts/Arial/Arial-Bold.ttf'
 
     font = ImageFont.truetype(os.path.join(settings.STATICFILES_DIRS[0], f), size=int(scale))
 

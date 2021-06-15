@@ -5,8 +5,6 @@ class UploadTemplates {
         this.hd = new HistoryDirections({step: 1}, '?action=edit&step=1')
 
         this.uploadContainer = null
-
-        this.supportFormats = ['image/jpeg', 'image/jpg', 'image/png']
     }
 
     init() {
@@ -35,7 +33,6 @@ class UploadTemplates {
         this.uploadContainer.on('drop', e => {
             e.preventDefault()
             let files = e.originalEvent.dataTransfer.files
-            console.log(e.originalEvent.dataTransfer.files)
             for (let i = 0; i < files.length; i++) {
                 if (files[i].type.split('/')[0] === 'image') {
                     let data = new FormData()
@@ -50,7 +47,10 @@ class UploadTemplates {
                     })
                 }
                 else {
+                    console.log(files[i])
                     console.error(`Недопустимый формат файла ${files[i].type}.`)
+                    let mw = new ModalWindow(`Недопустимый формат файла ${files[i].type}.`, 'error')
+                    mw.show()
                 }
             }
         })

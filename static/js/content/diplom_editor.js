@@ -100,7 +100,7 @@ class DiplomaEditor {
                               font-size: ${this.managePanel.selectedSize + 'px'};
                               font-style: ${this.managePanel.selectedBold};
                               font-weight: ${this.managePanel.selectedBold};
-                              font-family: Roboto;
+                              font-family: Arial;
                               border: rgb(8,30,170) dashed 2px; 
                               width: ${this.x2 > this.x1 ? this.x2 - this.x1 + 'px' : this.x1 - this.x2 + 'px'}; 
                               height: ${this.y2 > this.y1 ? this.y2 - this.y1 + 'px' : this.y1 - this.y2 + 'px'};
@@ -125,7 +125,7 @@ class DiplomaEditor {
         })
 
         this.container.find('span').on('mousemove', e => {
-            if (this.isResizeSelectedPlace && !this.selectedPlaceIsMoving) {
+            if (this.isResizeSelectedPlace && !this.isSelectingPlace && !this.selectedPlaceIsMoving) {
                 this.overrideEventListener(e)
                 let $this = $(e.currentTarget)
                 if ($this.attr('data-id').toString() === '1') {
@@ -143,6 +143,7 @@ class DiplomaEditor {
         this.container.find('span').on('mouseup', e => {
             this.overrideEventListener(e)
             this.isResizeSelectedPlace = false
+            this.isSelectingPlace = false
         })
 
         this.setSelectedPlaceActionListeners()
