@@ -77,3 +77,10 @@
     border: #2297dc solid 1px;
     box-shadow: rgba(34, 151, 220, 0.6) 0 0 4px 0;
 }
+
+.form_links {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-end;
+}

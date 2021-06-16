@@ -6,6 +6,7 @@ from PIL import Image
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.translation.trans_null import gettext_lazy as _
+from django.contrib.auth.decorators import login_required
 
 from main.models import DiplomaTemplate, ExcelForGenerate, ZipFile
 from main.serializers import DiplomaSerializer
@@ -15,14 +16,17 @@ from openpyxl import load_workbook
 
 # TODO: add authentication
 
+@login_required
 def index(request):
     return render(request, 'index.html')
 
 
+@login_required
 def editor(request):
     return render(request, 'diploma_editor.html')
 
 
+@login_required
 def get_diplomas_templates(request):
     # TODO: create authenticated
     # if not request.user.is_authenticated:
@@ -36,6 +40,7 @@ def get_diplomas_templates(request):
     })
 
 
+@login_required
 def upload_templates(request):
     if request.method == 'POST':
         f = request.FILES
@@ -55,6 +60,7 @@ def upload_templates(request):
     return JsonResponse({'result': False, 'message': _('Method not allowed.')})
 
 
+@login_required
 def generate_diploma(request):
     if request.method == 'GET':
         names = json.loads(request.GET.get('names'))

@@ -3,6 +3,16 @@ body, html {
     margin: 0;
 }
 
+a {
+    font-size: 17px;
+    color: #4062e5;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
 .main {
     display: flex;
     flex-direction: row;

@@ -1,38 +1,49 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    {% load static %}
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> {% load static %}
     <link rel="stylesheet" href="{% static 'css/warnings.css' %}">
     <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    <link rel="stylesheet" href="{% static 'css/content.css' %}">
     <link rel="stylesheet" href="{% static 'node_modules/bootstrap-icons/font/bootstrap-icons.css' %}">
     <script type="text/javascript" src="{% static 'node_modules/jquery/dist/jquery.min.js' %}"></script>
     <title>Вход</title>
 </head>
+
 <body style="background: #e7fafc">
-<form method="POST" class="form">
-    {% csrf_token %}
-    <div class="form_title"></div>
-    <section class="form_items_container">
-                    {% for error in form.non_field_errors %}
-                        <span class="error warning_message" style="font-size: 16px; padding: 10px;">{{ error }}</span>
-                    {% endfor %}
-        <label class="form_item_label">Логин</label>
-        <input class="form_item" type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150"
-               required="" id="id_username">
-        <label class="form_item_label">Пароль</label>
-        <input class="form_item" type="password" name="password" autocomplete="current-password" required="" id="id_password">
-    </section>
-    <button type="submit" class="form_button">Вход</button>
-</form>
-<script>
-    $(function () {
-        $('.form_title').text(document.title)
-        $('.form').animate({top: "200px"}, 500)
-    })
-</script>
+    <form method="POST" class="form">
+        {% csrf_token %}
+        <div class="form_title"></div>
+        <section class="form_items_container">
+            {% for error in form.non_field_errors %}
+            <span class="error warning_message" style="font-size: 16px; padding: 10px;">{{ error }}</span> {% endfor %}
+            <label class="form_item_label">Логин</label>
+            <input class="form_item" type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="" id="id_username">
+            <label class="form_item_label">Пароль</label>
+            <input class="form_item" type="password" name="password" autocomplete="current-password" required="" id="id_password">
+        </section>
+        <section class="form_links">
+            <a href="#">Сбросить пароль?</a>
+            <a href="#">Зарегистрироваться?</a>
+        </section>
+        <button type="submit" class="form_button">Вход</button>
+    </form>
+    <script>
+        $(function() {
+            $('.form_title').text(document.title)
+            $('.form').animate({
+                top: "200px"
+            }, 500)
+            $('.form_button').on('click', e => {
+                debugger
+                let l = new Loading($('.form_button'))
+                l.startLoading()
+            })
+        })
+    </script>
 </body>
+
 </html>
