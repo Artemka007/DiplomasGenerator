@@ -1,57 +1,79 @@
-              <!doctype html>
+<!doctype html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge"> {% load static %}{% load static %}
+    <meta name="viewport"
+          content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% load static %}
     <link rel="stylesheet" href="{% static 'css/warnings.css' %}">
     <link rel="stylesheet" href="{% static 'css/forms.css' %}">
     <link rel="stylesheet" href="{% static 'css/content.css' %}">
     <link rel="stylesheet" href="{% static 'node_modules/bootstrap-icons/font/bootstrap-icons.css' %}">
     <script type="text/javascript" src="{% static 'node_modules/jquery/dist/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/content/account/signup.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/fragments/loading.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/api.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/fragments/view_warnings/modal_window.js' %}"></script>
     <title>Регистрация</title>
 </head>
 
 <body data-action="main" style="background: #e7fafc">
-    <form method="POST" class="form">
-        {% csrf_token %}
-        <div class="form_title"></div>
-        <section class="form_items_container">
+<form method="POST" class="form">
+    {% csrf_token %}
+    <div class="form_title"></div>
+    <section class="form_items_container">
+        <label class="form_item_label" for="id_username">Имя пользователя</label>
+        <input class="form_item" type="text" name="username" maxlength="150" autofocus="" required="" id="id_username">
 
-            <label class="form_item_label" for="id_username">Имя пользователя</label> <input class="form_item" type="text" name="username" maxlength="150" autofocus="" required="" id="id_username">
-            <label class="form_item_label" for="id_email">Email</label> <input class="form_item" type="email" name="email" maxlength="100" required="" id="id_email">
-            <label class="form_item_label" for="id_first_name">Имя</label> <input class="form_item" type="text" name="first_name" maxlength="100" required="" id="id_first_name">
-            <label class="form_item_label" for="id_last_name">Фамилия</label> <input class="form_item" type="text" name="last_name" maxlength="100" required="" id="id_last_name">
-            <label class="form_item_label" for="id_password1">Пароль</label> <input class="form_item" type="password" name="password1" autocomplete="new-password" required="" id="id_password1">
-            <label class="form_item_label" for="id_password2">Подтверждение пароля</label> <input class="form_item" type="password" name="password2" autocomplete="new-password" required="" id="id_password2">
-        </section>
-        </section>
-        <section class="form_links">
-        </section>
-        <button type="submit" class="form_button">Регистрация</button>
-    </form>
-    <script>
-        $(function() {
-            $('.form_title').text(document.title)
-            $('.form').animate({
-                top: "200px"
-            }, 500)
-            $('.form_button').on('click', e => {
-                let l = new Loading($('.form_button'))
-                l.startLoading()
-            })
-            $('.form_item').on('focus', e => {
-                let elem = e.currentTarget
-                $(elem).addClass('shadow-show')
-            })
-            $('.form_item').on('blur', e => {
-                let elem = e.currentTarget
-                $(elem).removeClass("shadow-show")
-            })
+        <label class="form_item_label" for="id_email">Email</label>
+        <input class="form_item" type="email" name="email" maxlength="100" required="" id="id_email">
+
+        <label class="form_item_label" for="id_first_name">Имя</label>
+        <input class="form_item" type="text" name="first_name" maxlength="100" required="" id="id_first_name">
+
+        <label class="form_item_label" for="id_last_name">Фамилия</label>
+        <input class="form_item" type="text" name="last_name" maxlength="100" required="" id="id_last_name">
+
+        <label class="form_item_label" for="id_password1">Пароль</label>
+        <input class="form_item" type="password" name="password1" autocomplete="new-password" required=""
+               id="id_password1">
+
+        <label class="form_item_label" for="id_password2">Подтверждение пароля</label>
+        <input class="form_item" type="password" name="password2" autocomplete="new-password" required=""
+               id="id_password2">
+    </section>
+    </section>
+    <section class="form_links">
+    </section>
+    <button type="button" class="form_button">Регистрация</button>
+</form>
+<script>
+    $(function () {
+        let s = new SignUp()
+        $('.form_title').text(document.title)
+        $('.form').animate({
+            top: "200px"
+        }, 500)
+        $('.form_button').on('click', e => {
+            let l = new Loading($('.form_button'))
+            l.startLoading()
+            s.submit(l)
         })
-    </script>
+        $('.form_item').on('focus', e => {
+            let elem = e.currentTarget
+            $(elem).addClass('shadow-show')
+        })
+        $('.form_item').on('blur', e => {
+            let elem = e.currentTarget
+            $(elem).removeClass("shadow-show")
+        })
+        $('.form_item').on('change', e => {
+            s.setData($('#id_username').val(), $('#id_email').val(), $('#id_first_name').val(), $('#id_last_name').val(), $('#id_password1').val(), $('#id_password2').val())
+        })
+    })
+</script>
 </body>
 
 </html>

@@ -27,7 +27,7 @@
         </section>
         <section class="form_links">
             <a href="#">Сбросить пароль</a>
-            <a href="#">Зарегистрироваться</a>
+            <a href="{% url 'sign_up' %}">Зарегистрироваться</a>
         </section>
         <button type="submit" class="form_button">Вход</button>
     </form>
@@ -42,9 +42,12 @@
                 l.startLoading()
             })
             $('.form_item').on('focus', e => {
-                $(e.currentTarget).animate({
-                    'box-shadow': 'rgba(34, 151, 220, 0.8) 0 0 8px 0'
-                }, 200)
+                let elem = e.currentTarget
+                $(elem).addClass('shadow-show')
+            })
+            $('.form_item').on('blur', e => {
+                let elem = e.currentTarget
+                $(elem).removeClass("shadow-show")
             })
         })
     </script>

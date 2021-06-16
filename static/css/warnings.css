@@ -12,6 +12,8 @@
     font-family: "Comic Sans MS";
     z-index: -1;
     top: 0;
+    left: calc(50% - 500px);
+    box-sizing: border-box;
 }
 
 .ok {

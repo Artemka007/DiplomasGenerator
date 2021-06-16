@@ -40,9 +40,16 @@
     transition: background-color .2s;
 }
 
-.form_button:hover {
+.form_button:hover,
+.form_button:focus {
     background-color: #2297dc;
     color: #FFFFFF;
+}
+
+.form_button:disabled {
+    background-color: #4e9dcb;
+    color: #FFFFFF;
+    cursor: not-allowed;
 }
 
 .form_items_container {

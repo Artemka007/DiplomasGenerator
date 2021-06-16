@@ -36,9 +36,9 @@ class ChooseDiplomaTemplate {
             if (res.result) {
                 this.templates = res.templates
                 this.drawingTemplates()
-                console.log(this.prevData)
             } else {
-                console.error(res.message)
+                let mw = new ModalWindow(res.message, 'error')
+                mw.show()
             }
         })
 

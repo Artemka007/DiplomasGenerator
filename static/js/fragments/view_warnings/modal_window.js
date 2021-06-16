@@ -1,7 +1,9 @@
 class ModalWindow {
-    constructor(message, type) {
+    constructor(message, type, y) {
         this.message = message
         this.type = type
+
+        this.y = y
 
         this.main = $('[data-action="main"]')
 
@@ -10,6 +12,6 @@ class ModalWindow {
 
     show() {
         let ww = $('.warning_window')
-        ww.animate({ top: '69px', zIndex: 1 })
+        ww.animate({ top: this.y || this.y === 0 ? this.y :'69px', zIndex: 1 })
     }
 }

@@ -16,7 +16,7 @@ def sign_up(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
-            return JsonResponse({'result': True, 'message': _('Form saved successful.'), 'redirect_to': settings.LOGIN_REDIRECT_URL or '/'})
+            return JsonResponse({'result': True, 'message': _('Form saved successful.'), 'redirect_to': settings.LOGIN_URL or '/'})
         else:
             return JsonResponse({'message': _('Something was wrong... Please, try again.'), 'result': False, 'errors': form.errors})
 
