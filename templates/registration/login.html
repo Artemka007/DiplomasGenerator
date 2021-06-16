@@ -13,7 +13,7 @@
     <title>Вход</title>
 </head>
 
-<body style="background: #e7fafc">
+<body data-action="main" style="background: #e7fafc">
     <form method="POST" class="form">
         {% csrf_token %}
         <div class="form_title"></div>
@@ -26,8 +26,8 @@
             <input class="form_item" type="password" name="password" autocomplete="current-password" required="" id="id_password">
         </section>
         <section class="form_links">
-            <a href="#">Сбросить пароль?</a>
-            <a href="#">Зарегистрироваться?</a>
+            <a href="#">Сбросить пароль</a>
+            <a href="#">Зарегистрироваться</a>
         </section>
         <button type="submit" class="form_button">Вход</button>
     </form>
@@ -38,9 +38,13 @@
                 top: "200px"
             }, 500)
             $('.form_button').on('click', e => {
-                debugger
                 let l = new Loading($('.form_button'))
                 l.startLoading()
+            })
+            $('.form_item').on('focus', e => {
+                $(e.currentTarget).animate({
+                    'box-shadow': 'rgba(34, 151, 220, 0.8) 0 0 8px 0'
+                }, 200)
             })
         })
     </script>

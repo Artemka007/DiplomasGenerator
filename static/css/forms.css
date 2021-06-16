@@ -7,7 +7,7 @@
     align-items: center;
     padding: 10px;
     background-color: #ffffff;
-    box-shadow: rgba(0,0,0,0.25) 0 4px 8px 0;
+    box-shadow: rgba(0, 0, 0, 0.25) 0 4px 8px 0;
     width: 400px;
     height: fit-content;
     border-radius: 10px;
@@ -20,7 +20,7 @@
     width: 100%;
     font-size: 25px;
     font-family: "Comic Sans MS";
-    color: rgba(0,0,0,0.75);
+    color: rgba(0, 0, 0, 0.75);
 }
 
 .form_button {
@@ -54,7 +54,7 @@
 .form_item_label {
     font-size: 18px;
     padding: 7px;
-    color: rgba(0,0,0,0.8);
+    color: rgba(0, 0, 0, 0.8);
 }
 
 .form_item {
@@ -75,7 +75,6 @@
 
 .form_item:focus {
     border: #2297dc solid 1px;
-    box-shadow: rgba(34, 151, 220, 0.6) 0 0 4px 0;
 }
 
 .form_links {
@@ -83,4 +82,27 @@
     flex-direction: column;
     width: 100%;
     align-items: flex-end;
+}
+
+@keyframes showShadow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(34, 151, 220, 0);
+    }
+    100% {
+        box-shadow: 0 0 8px 0 rgba(34, 151, 220, 0.8);
+    }
+}
+
+@keyframes closeShadow {
+    0% {
+        box-shadow: 0 0 8px 0 rgba(34, 151, 220, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(34, 151, 220, 0);
+    }
+}
+
+.shadow-show {
+    animation: showShadow 0.2s ease;
+    animation-fill-mode: forwards;
 }

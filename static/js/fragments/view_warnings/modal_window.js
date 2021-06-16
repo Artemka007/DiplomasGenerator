@@ -10,6 +10,6 @@ class ModalWindow {
 
     show() {
         let ww = $('.warning_window')
-        ww.animate({top: '69px', zIndex: 1})
+        ww.animate({ top: '69px', zIndex: 1 })
     }
 }

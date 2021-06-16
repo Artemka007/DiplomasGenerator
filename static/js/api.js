@@ -20,11 +20,11 @@ function getCookie(name) {
 
 
 const API = {
-    getTemplates: function () {
+    getTemplates: function() {
         return $.get('/templates/')
     },
 
-    generateDiploma: function (data) {
+    generateDiploma: function(data) {
         return $.ajax('/generator/', {
             method: 'GET',
             data: data,
@@ -32,7 +32,7 @@ const API = {
         })
     },
 
-    generateAllDiplomas: function (data) {
+    generateAllDiplomas: function(data) {
         return $.ajax('/generator/', {
             method: 'POST',
             headers: { "X-CSRFToken": getCookie("csrftoken") },
@@ -42,13 +42,22 @@ const API = {
         })
     },
 
-    uploadTemplate: function (data, method) {
+    uploadTemplate: function(data, method) {
         return $.ajax('/upload/', {
             method: method,
             headers: { "X-CSRFToken": getCookie("csrftoken") },
             data: data,
             contentType: false,
             processData: false,
+        })
+    },
+
+
+    signUp: function(data) {
+        return $.ajax('/account/sign_up/', {
+            method: 'POST',
+            headers: { "X-CSRFToken": getCookie("csrftoken") },
+            data: data
         })
     }
 }

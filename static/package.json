@@ -1,15 +1,17 @@
 {
-  "name": "static",
-  "version": "1.0.0",
-  "description": "Node modules",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Artem Kopylov",
-  "license": "ISC",
-  "dependencies": {
-    "bootstrap-icons": "^1.5.0",
-    "jquery": "^3.6.0"
-  }
+    "name": "static",
+    "version": "1.0.0",
+    "description": "Node modules",
+    "main": "index.js",
+    "scripts": {},
+    "author": "Artem Kopylov",
+    "license": "ISC",
+    "dependencies": {
+        "bootstrap-icons": "^1.5.0",
+        "jquery": "^3.6.0"
+    },
+    "devDependencies": {
+        "webpack": "^5.39.0",
+        "webpack-cli": "^4.7.2"
+    }
 }
