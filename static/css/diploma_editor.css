@@ -2,7 +2,7 @@
     position: absolute;
     display: flex;
     flex-direction: column;
-    box-shadow: 4px 4px 20px 8px rgba(0, 0, 0, 0.5);
+    box-shadow: 4px 4px 20px 8px rgba(0, 0, 0, 0.1);
     width: fit-content;
     height: fit-content;
 }
@@ -30,11 +30,10 @@
     box-sizing: border-box;
     padding: 10px;
     background: #FFFFFF;
-    box-shadow: 4px 4px 20px 8px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 4px 20px 8px rgba(0, 0, 0, 0.1);
 }
 
-.editor_panel option:hover {
-}
+.editor_panel option:hover {}
 
 .editor_panel__params {
     display: flex;
@@ -58,8 +57,6 @@
     justify-content: center;
     padding: 10px;
 }
-
-
 
 .buttons_container_item {
     padding: 7px 15px;
@@ -88,7 +85,7 @@
     flex-wrap: wrap;
     background-color: #FFFFFF;
     padding: 10px;
-    box-shadow: rgba(0,0,0,0.5) 4px 4px 20px 0;
+    box-shadow: rgba(0, 0, 0, 0.1) 4px 4px 20px 0;
     box-sizing: border-box;
     width: 100%;
     margin-bottom: 20px;

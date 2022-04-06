@@ -56,16 +56,18 @@ class ChooseDiplomaTemplate {
         })
 
         $('[data-action="upload_templates_btn"]').on('click', e => {
-            let hd = new HistoryDirections({}, '?action=upload&obj=template')
-            hd.next()
+            let hd = new HistoryDirections({}, '/editor/?action=upload&obj=template')
+            hd.go()
         })
     }
 
     drawingTemplates() {
         this.container.html('')
         for (let i = 0; i < this.templates.length; i++) {
-            this.container.append(`<section id="${this.templates[i]['id']}" data-url="${this.templates[i]['diploma']}" class="select_diploma_template" style="background-image: url(${this.templates[i]['diploma']}); margin: 10px; border: ${this.selectedTemplate === this.templates[i]['diploma'] ? 'rgb(17,25,227) solid 2px' : 'aqua solid 2px'}">
-                                    <div data-action="select_diploma_actions" style="cursor: pointer; background-color: rgba(0,0,0,0); width: 100%; height: 100%; border-radius: 10px;"></div>
+            this.container.append(`<section id="${this.templates[i]['id']}" data-url="${this.templates[i]['diploma']}" 
+                                            class="select_diploma_template" style="background-image: url(${this.templates[i]['diploma']}); margin: 10px; 
+                                            border: ${this.selectedTemplate === this.templates[i]['diploma'] ? 'rgb(17,25,227) solid 2px' : 'aqua solid 2px'}">
+                                        <div data-action="select_diploma_actions" style="cursor: pointer; background-color: rgba(0,0,0,0); width: 100%; height: 100%; border-radius: 10px;"></div>
                                     </section>`)
             this.setActionListeners()
         }

@@ -5,16 +5,14 @@ class PreviewGenerateDiploma {
         this.data = {...window.history.state }
 
         this.d = {
-            image: baseURI + this.data['selectedTemplate'],
+            template: baseURI + this.data['selectedTemplate'],
             names: JSON.stringify(["Иван Иванов"]),
             x: parseInt(this.data['resultX']),
             y: this.data['y1'],
-            bold: this.data['selectedBold'],
-            color: this.data['selectedColor'],
-            size: this.data['selectedSize'],
+            font_weight: this.data['selectedBold'],
+            font_size: this.data['selectedSize'],
+            foreground: this.data['selectedColor'],
         }
-
-        console.log(this.data['resultX'])
     }
 
     init() {
@@ -37,7 +35,7 @@ class PreviewGenerateDiploma {
         $('[data-type="next"]').on('click', e => {
             let fd = new FormData()
             fd.append('file', this.data.file)
-            API.generateAllDiplomas(fd).then(res => {
+            API.getNames(fd).then(res => {
                 this.d.names = JSON.stringify(res.names)
                 API.generateDiploma(this.d).then(res => {
                     if (res.result) {

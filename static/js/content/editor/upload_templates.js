@@ -10,7 +10,7 @@ class UploadTemplates {
     init() {
         $('[data-action="upload_templates_btn"]').text('Вернуться')
         $('[data-action="upload_templates_btn"]').off('click').on('click', e => {
-            this.hd.next()
+            this.hd.go()
         })
 
         let main = $('[data-action="main"]')

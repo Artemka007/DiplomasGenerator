@@ -1,0 +1,9 @@
+/venv/
+
+__pycache__
+migrations
+
+/static/node_modules/
+
+/.vscode/
+/idea/

@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views import *
 
 urlpatterns = [
@@ -6,5 +7,6 @@ urlpatterns = [
     path('editor/', editor, name='editor'),
     path('templates/', get_diplomas_templates, name='get_diplomas_templates'),
     path('generator/', generate_diploma, name='generate_diploma'),
+    path('get_names/', get_names, name='get_names'),
     path('upload/', upload_templates, name='upload_templates'),
 ]

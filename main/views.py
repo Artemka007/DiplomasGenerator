@@ -2,19 +2,18 @@ import io
 import json
 import zipfile
 
-from PIL import Image
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.translation.trans_null import gettext_lazy as _
-from django.contrib.auth.decorators import login_required
+from openpyxl import load_workbook
+from PIL import Image
 
 from main.models import DiplomaTemplate, ExcelForGenerate, ZipFile
 from main.serializers import DiplomaSerializer
-from .support import *
 
-from openpyxl import load_workbook
+from .utils import *
 
-# TODO: add authentication
 
 @login_required
 def index(request):
@@ -26,11 +25,9 @@ def editor(request):
     return render(request, 'diploma_editor.html')
 
 
-@login_required
 def get_diplomas_templates(request):
-    # TODO: create authenticated
-    # if not request.user.is_authenticated:
-    #     return JsonResponse({'result': False, 'message': _('User is not authenticated.')})
+    if not request.user.is_authenticated:
+        return JsonResponse({'result': False, 'message': _('User is not authenticated.')})
 
     templates = DiplomaTemplate.objects.all()
     return JsonResponse({
@@ -40,16 +37,23 @@ def get_diplomas_templates(request):
     })
 
 
-@login_required
 def upload_templates(request):
+    '''
+    View-функция для загрузки шаблона грамоты
+    '''
     if request.method == 'POST':
         f = request.FILES
-        dp = DiplomaTemplate.objects.create(diploma=f.get('file'))
+        temp = DiplomaTemplate.objects.create(diploma=f.get('file'))
         try:
-            dp.save()
+            temp.save()
         except Exception as e:
             return JsonResponse({'result': False, 'message': _(e.__str__())})
-        return JsonResponse({'result': True, 'message': _('Template was saved.'), 'url': dp.diploma.url, 'id': dp.id})
+        return JsonResponse({
+            'result': True, 
+            'message': _('Template was saved.'), 
+            'url': temp.diploma.url, 
+            'id': temp.id
+        })
 
     elif request.method == 'DELETE':
         id = request.POST.get('id')
@@ -60,39 +64,46 @@ def upload_templates(request):
     return JsonResponse({'result': False, 'message': _('Method not allowed.')})
 
 
-@login_required
 def generate_diploma(request):
+    '''
+    View-функция для генерации грамот
+    '''
     if request.method == 'GET':
+        # получяем массив с именами учеников
         names = json.loads(request.GET.get('names'))
-        if len(names) > 1:
-            buffer = io.BytesIO()
-            zip_file = zipfile.ZipFile(buffer, 'w')
 
-            for i in names:
-                b = io.BytesIO()
+        # Если длинна массива равна одному, значит пришел запрос на тестовую грамоту, следовательно zip-файла создавать не нужно
+        if len(names) <= 1:
+            url = generate_image_object(request.GET, names[0], False)
+            return JsonResponse({
+                'result': True,
+                'message': _('Images was generated.'),
+                'url': url
+            })
+        
+        buffer = io.BytesIO()
+        zip_file = zipfile.ZipFile(buffer, 'w')
 
-                path = generate_img(request, i, True)
-                image = Image.open(path)
-                image.save(b, format='PNG')
+        for i in names:
+            b = io.BytesIO()
 
-                b.seek(0)
+            path = generate_image_object(request.GET, i, True)
+            image = Image.open(path)
+            image.save(b, format='JPEG')
 
-                zip_file.writestr(path.split('\\')[-1], b.read())
+            b.seek(0)
 
-            zip_file.close()
+            zip_file.writestr(path.split('\\')[-1], b.read())
 
-            f = ZipFile.objects.create(file=InMemoryUploadedFile(buffer, None, "TestZip.zip", 'application/zip', buffer.tell, None))
-            f.save()
+        zip_file.close()
 
-            return JsonResponse({'result': True, 'message': 'True', 'url': f.file.url})
-        url = generate_img(request, json.loads(request.GET.get('names'))[0], False)
-        return JsonResponse({
-            'result': True,
-            'message': _('Images was generated.'),
-            'url': url
-        })
+        f = ZipFile.objects.create(file=InMemoryUploadedFile(buffer, None, "TestZip.zip", 'application/zip', buffer.tell, None))
+        f.save()
 
-    elif request.method == 'POST':
+        return JsonResponse({'result': True, 'message': _('Images has been generated.'), 'url': f.file.url})
+
+def get_names(request):
+    if request.method == 'POST':
         names = []
 
         excel = ExcelForGenerate(file=request.FILES.get('file'))
@@ -101,8 +112,7 @@ def generate_diploma(request):
         except Exception as e:
             return JsonResponse({
                 'result': False,
-                'message': _('Something was wrong... Please, try again'),
-                'errors': e.__str__(),
+                'message': _(e.__str__()),
             })
 
         wb_obj = load_workbook(excel.file.path)

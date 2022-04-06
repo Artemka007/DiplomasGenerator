@@ -32,8 +32,8 @@ const API = {
         })
     },
 
-    generateAllDiplomas: function(data) {
-        return $.ajax('/generator/', {
+    getNames: function(data) {
+        return $.ajax('/get_names/', {
             method: 'POST',
             headers: { "X-CSRFToken": getCookie("csrftoken") },
             data: data,

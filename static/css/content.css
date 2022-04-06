@@ -1,4 +1,5 @@
-body, html {
+body,
+html {
     padding: 0;
     margin: 0;
 }
@@ -24,8 +25,9 @@ a:hover {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    background: linear-gradient(to bottom, rgb(32, 78, 246), rgb(0, 22, 228), rgb(4, 1, 154));
+    background: #FFFFFF;
     padding: 10px 15px;
+    border-bottom: rgb(0, 25, 184) solid 1px;
 }
 
 .navbar__items__container {
@@ -35,27 +37,18 @@ a:hover {
 .navbar__item {
     display: flex;
     flex-direction: row;
-    color: #FFF;
+    color: rgb(30, 18, 69);
     font-size: 20px;
     cursor: pointer;
     padding: 10px 20px;
     text-decoration: none;
     border-radius: 15px;
     box-sizing: content-box;
-    border-top: rgba(0,0,0,0) solid 3px;
-    border-bottom: rgba(0,0,0,0) solid 3px;
-    transition: background .1s;
 }
 
 .navbar__item:hover {
-    background: linear-gradient(to top, #f1b129, #ce900b, #b67f07);
-    border-top: rgb(26, 222, 222) solid 3px;
-    border-bottom: rgb(26, 222, 222) solid 3px;
-}
-
-.navbar__item:active {
-    border-top: #b67f07 solid 3px;
-    border-bottom: #f1b129 solid 3px;
+    color: #1c44e0;
+    text-decoration: none;
 }
 
 .btn_default {

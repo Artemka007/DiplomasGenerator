@@ -1,33 +1,42 @@
 class HistoryDirections {
-    constructor(data, url) {
+    /**
+     * @param {*} data 
+     * @param {string} url 
+     * @param {() => void} callback функция, которая выполняется перед изменением в history api
+     */
+    constructor(data, url, callback = () => {}) {
         this.data = data
+        this.url = url
+        this.callback = callback
 
         this.nextButton = $('[data-type="next"]')
         this.previousButton = $('[data-type="previous"]')
-
-        this.url = url
     }
 
     init() {
         this.setEventListeners()
     }
 
+    go() {
+        this.callback()
+        window.history.pushState({...this.data }, document.title, this.url)
+        $('[data-action="main"] section').remove()
+        this.setContent()
+    }
+
     next() {
+        this.callback()
         const step = new URLSearchParams(location.search).get('step')
-        if (step) {
-            let s = parseInt(step) + 1
-            window.history.pushState({ step: s, ...this.data }, document.title, this.url || '?action=edit&step=' + s)
-            $('[data-action="main"] section').remove()
-            this.setContent()
-        } else {
-            window.history.pushState({...this.data }, document.title, this.url)
-            $('[data-action="main"] section').remove()
-            this.setContent()
-        }
+        let s = parseInt(step) + 1
+        window.history.pushState({ step: s, ...this.data }, document.title, `${this.url || ""}?action=edit&step=${s}`)
+        $('[data-action="main"] section').remove()
+        this.setContent()
     }
 
     previous() {
-        let s = parseInt(new URLSearchParams(location.search).get('step')) - 1
+        this.callback()
+        const step = new URLSearchParams(location.search).get('step')
+        let s = parseInt(step) - 1
         window.history.pushState({ step: s, ...this.data }, document.title, this.url || '?action=edit&step=' + s)
         $('[data-action="main"] section').remove()
         this.setContent()
