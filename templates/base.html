@@ -12,12 +12,14 @@
     <link rel="stylesheet" href="{% static 'css/forms.css' %}">
     <link rel="stylesheet" href="{% static 'node_modules/bootstrap-icons/font/bootstrap-icons.css' %}">
     <script type="text/javascript" src="{% static 'node_modules/jquery/dist/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'node_modules/read-excel-file/bundle/read-excel-file.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/index.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/fragments/view_warnings/modal_window.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/content/editor/choose_diploma_template.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/content/editor/diploma_editor.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/history_directions.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/api.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/utils/excelreader.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/content/editor/upload_templates.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/content/editor/preview_generate_diploma.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/content/editor/account/login.js' %}"></script>
@@ -26,15 +28,12 @@
 <body>
     <nav role="navigation" class="navbar">
         <section class="navbar__items__container" style="margin-left: 30%;">
-            <a href="{% url 'index' %}" class="navbar__item">Главная</a>
             <a href="{% url 'editor' %}" class="navbar__item">Редактор грамот</a>
         </section>
         <section class="navbar__items__container" style="margin-right: 30%;">
             {% if request.user.is_authenticated %}
-            <a class="navbar__item">{{ request.user.username }}</a>
             <a class="navbar__item" href="/account/sign_out">Выйти</a> {% else %}
-            <a class="navbar__item" href="{% url 'login' %}">Вход</a>
-            <a class="navbar__item">Регистрация</a> {% endif %}
+            <a class="navbar__item" href="{% url 'login' %}">Вход</a> {% endif %}
         </section>
     </nav>
     <main class="main" role="main">

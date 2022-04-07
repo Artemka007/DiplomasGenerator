@@ -1,6 +1,6 @@
 from django.forms import *
 
-from generator.models import ExcelForGenerate, GeneratedDiplomas
+from generator.models import GeneratedDiplomas
 
 
 class GeneratedDiplomasForm(ModelForm):
@@ -8,8 +8,3 @@ class GeneratedDiplomasForm(ModelForm):
         model = GeneratedDiplomas
         fields = '__all__'
 
-
-class SaveExcel(ModelForm):
-    class Meta:
-        model = ExcelForGenerate
-        fields = '__all__'

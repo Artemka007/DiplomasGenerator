@@ -16,19 +16,22 @@ from generator.forms import GeneratedDiplomasForm
 
 def url_to_image(url: str):
     '''
-    Функция для преобразования url изображения в само изображение в битовом представлении
+    Функция для открытия изображения по url.
     
     :param url
 
-    :return - битовое изображение
+    :return - файл изображения
     '''
-    response = urllib.request.urlopen(url)
-    return io.BytesIO(response.read())
+
+    # т.к. с фронта приходит url изображения, то его необходимо преобразовать в путь к изображению на компьютере
+    path = url.split("/media/")[1]
+    file = open(f'./media/{path}', 'rb')
+    return file
 
 
-def generate_image(template: str, text: str, x: str, y: str, font_weight: str, font_size: str, foreground: str):
+def generate_byte_image(template: str, text: str, x: str, y: str, font_weight: str, font_size: str, foreground: str):
     '''
-    Функция, которая генерирует изображение грамоты в формате jpg.
+    Функция, которая генерирует изображение грамоты в битовом формате.
 
     :param template - url шаблона грамоты
     :param text - имя и фамилия ученика, для которого генерируется грамота
@@ -41,8 +44,7 @@ def generate_image(template: str, text: str, x: str, y: str, font_weight: str, f
     :return - изображение грамоты
     '''
 
-    byte_image = url_to_image(template)
-    opened_image = Image.open(byte_image)
+    text_coordinates = (int(x), int(y))
     font_family = 'fonts/Arial/Arial.ttf'
 
     if font_weight == 'italic':
@@ -55,9 +57,11 @@ def generate_image(template: str, text: str, x: str, y: str, font_weight: str, f
 
     font = ImageFont.truetype(font=font_path, size=int(font_size))
 
+    image_file = url_to_image(template)
+    opened_image = Image.open(image_file)
+
     drawer = ImageDraw.Draw(opened_image)
-    xy = (int(x), int(y))
-    drawer.text(xy, text, font=font, fill=foreground, align='center')
+    drawer.text(text_coordinates, text, font=font, fill=foreground, align='center')
 
     image_io = io.BytesIO()
     opened_image.save(image_io, opened_image.format)
@@ -74,13 +78,13 @@ def generate_image_object(data: Dict[str, str], text: str, is_path: bool) -> str
     '''
     Функция, которая генерирует объект грамоты и сохраняет его в базе данных.
     
-    :param data - данные в GET-запросе
+    :param data - данные в POST-запросе
     :param text - имя и фамилия ученика, для которого генерируется грамота
     :param is_path - флаг, который показывает, вернуть путь к файлу грамоты, или вернуть ее url
     
     :return - путь к файлу грамоты или url грамоты
     '''
-    img = generate_image(data.get('template'), text, data.get('x'), data.get('y'), data.get('font_weight'), data.get('font_size'),
+    img = generate_byte_image(data.get('template'), text, data.get('x'), data.get('y'), data.get('font_weight'), data.get('font_size'),
                          data.get('foreground'))
     diploma = GeneratedDiplomasForm()
     diploma.instance.generated_diploma.save(img.name, InMemoryUploadedFile(

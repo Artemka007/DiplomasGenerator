@@ -19,7 +19,7 @@ function getCookie(name) {
 }
 
 
-let apiversion = "v1"
+const apiversion = "v1"
 const API = {
     baseURI: `/api/${apiversion}`,
 
@@ -51,19 +51,10 @@ const API = {
 
     generateDiploma: function(data) {
         return $.ajax(`${API.baseURI}/generator/`, {
-            method: 'GET',
-            data: data,
-            dataType: 'json',
-        })
-    },
-
-    getNames: function(data) {
-        return $.ajax(`${API.baseURI}/get_names/`, {
             method: 'POST',
-            headers: { "X-CSRFToken": getCookie("csrftoken") },
             data: data,
-            contentType: false,
-            processData: false,
+            headers: { "X-CSRFToken": getCookie("csrftoken") },
+            dataType: 'json',
         })
     },
 

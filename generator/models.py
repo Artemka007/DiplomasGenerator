@@ -12,9 +12,5 @@ class GeneratedDiplomas(models.Model):
         return self.generated_diploma.url
 
 
-class ExcelForGenerate(models.Model):
-    file = models.FileField(upload_to='excelFiles/')
-
-
 class ZipFile(models.Model):
     file = models.FileField(upload_to='diplomas/zip/')

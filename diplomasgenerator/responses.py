@@ -10,3 +10,6 @@ class FailResponseSerializer(ResponseSerializer):
 
 class UnauthorizedResponseSerializer(ResponseSerializer):
     message = serializers.CharField(default="Пользователь не авторизован.")
+
+class StringListField(serializers.ListField):
+    child = serializers.CharField()

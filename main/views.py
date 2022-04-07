@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 
 @login_required
 def index(request):
-    return render(request, 'index.html')
+    return HttpResponseRedirect("/editor/")
 
 
 @login_required
