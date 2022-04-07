@@ -19,13 +19,38 @@ function getCookie(name) {
 }
 
 
+let apiversion = "v1"
 const API = {
+    baseURI: `/api/${apiversion}`,
+
     getTemplates: function() {
-        return $.get('/templates/')
+        return $.get(`${API.baseURI}/templates/`)
+    },
+
+    /**
+     * @param {*} data 
+     * @returns {Promise<any>}
+     */
+    uploadTemplate: function(data) {
+        return $.ajax(`${API.baseURI}/templates/`, {
+            method: "POST",
+            headers: { "X-CSRFToken": getCookie("csrftoken") },
+            data: data,
+            contentType: false,
+            processData: false,
+        })
+    },
+
+    deleteTemplate: function(data) {
+        return $.ajax(`${API.baseURI}/templates/`, {
+            method: "DELETE",
+            headers: { "X-CSRFToken": getCookie("csrftoken") },
+            data: data,
+        })
     },
 
     generateDiploma: function(data) {
-        return $.ajax('/generator/', {
+        return $.ajax(`${API.baseURI}/generator/`, {
             method: 'GET',
             data: data,
             dataType: 'json',
@@ -33,7 +58,7 @@ const API = {
     },
 
     getNames: function(data) {
-        return $.ajax('/get_names/', {
+        return $.ajax(`${API.baseURI}/get_names/`, {
             method: 'POST',
             headers: { "X-CSRFToken": getCookie("csrftoken") },
             data: data,
@@ -41,17 +66,6 @@ const API = {
             processData: false,
         })
     },
-
-    uploadTemplate: function(data, method) {
-        return $.ajax('/upload/', {
-            method: method,
-            headers: { "X-CSRFToken": getCookie("csrftoken") },
-            data: data,
-            contentType: false,
-            processData: false,
-        })
-    },
-
 
     signUp: function(data) {
         return $.ajax('/account/sign_up/', {

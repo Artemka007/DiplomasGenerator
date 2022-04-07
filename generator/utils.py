@@ -11,7 +11,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils.translation.trans_null import gettext_lazy as _
 from PIL import Image, ImageDraw, ImageFont
 
-from main.forms import GeneratedDiplomasForm
+from generator.forms import GeneratedDiplomasForm
 
 
 def url_to_image(url: str):

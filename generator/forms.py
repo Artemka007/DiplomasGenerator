@@ -1,6 +1,6 @@
 from django.forms import *
 
-from main.models import GeneratedDiplomas, ExcelForGenerate
+from generator.models import ExcelForGenerate, GeneratedDiplomas
 
 
 class GeneratedDiplomasForm(ModelForm):

@@ -40,6 +40,7 @@ class ChooseDiplomaTemplate {
                 let mw = new ModalWindow(res.message, 'error')
                 mw.show()
             }
+            this.setActionListeners()
         })
 
     }
