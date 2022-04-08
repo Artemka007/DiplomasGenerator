@@ -8,7 +8,7 @@ class ResponseSerializer(serializers.Serializer):
 class FailResponseSerializer(ResponseSerializer):
     result = serializers.BooleanField(default=False)
 
-class UnauthorizedResponseSerializer(ResponseSerializer):
+class UnauthorizedResponseSerializer(FailResponseSerializer):
     message = serializers.CharField(default="Пользователь не авторизован.")
 
 class StringListField(serializers.ListField):

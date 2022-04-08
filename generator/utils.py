@@ -11,7 +11,8 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils.translation.trans_null import gettext_lazy as _
 from PIL import Image, ImageDraw, ImageFont
 
-from generator.forms import GeneratedDiplomasForm
+from generator.forms import DiplomaForm
+from generator.serializers import DipomaSerializer
 
 
 def url_to_image(url: str):
@@ -44,7 +45,7 @@ def generate_byte_image(template: str, text: str, x: str, y: str, font_weight: s
     :return - изображение грамоты
     '''
 
-    text_coordinates = (int(x), int(y))
+    text_coordinates = (float(x), float(y))
     font_family = 'fonts/Arial/Arial.ttf'
 
     if font_weight == 'italic':
@@ -69,7 +70,7 @@ def generate_byte_image(template: str, text: str, x: str, y: str, font_weight: s
     # рандомная последовательность букв и цифр для названия изображения
     ran = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
 
-    image_name = f'GeneratedDiploma_{template.split("/")[-1].split(".")[0]}_{ran}.jpg'
+    image_name = f'GeneratedDiploma_{template.split("/")[-1].split(".")[0]}_{ran}.png'
     new_image = ContentFile(image_io.getvalue(), name=image_name)
 
     return new_image
@@ -84,18 +85,28 @@ def generate_image_object(data: Dict[str, str], text: str, is_path: bool) -> str
     
     :return - путь к файлу грамоты или url грамоты
     '''
-    img = generate_byte_image(data.get('template'), text, data.get('x'), data.get('y'), data.get('font_weight'), data.get('font_size'),
+    img = generate_byte_image(data.get('template_url'), text, data.get('x'), data.get('y'), data.get('font_weight'), data.get('font_size'),
                          data.get('foreground'))
-    diploma = GeneratedDiplomasForm()
-    diploma.instance.generated_diploma.save(img.name, InMemoryUploadedFile(
+    
+    template_id = data.get("template_id")
+    template_src = InMemoryUploadedFile(
         img,
         None,
         img.name,
         'image/*',
         img.tell,
         None
-    ))
-    if is_path:
-        return diploma.instance.generated_diploma.path
+    )
+
+    if template_id is not None:
+        diploma = DipomaSerializer(data={"temp": int(template_id), "src": template_src})
     else:
-        return diploma.instance.generated_diploma.url
+        diploma = DipomaSerializer(data={"src": template_src})
+    
+    diploma.is_valid(raise_exception=True)
+    instance = diploma.save()
+
+    if is_path:
+        return diploma.instance.src.path
+    else:
+        return diploma.instance.src.url

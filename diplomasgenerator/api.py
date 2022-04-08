@@ -22,10 +22,10 @@ urlpatterns = [
     path(
         'api/v1/docs/',
         TemplateView.as_view(
-            template_name='swaggerui/swaggerui.html',
+            template_name='api/docs.html',
             extra_context={'schema_url': 'openapi-schema'}
         ),
-        name='swagger-ui'
+        name='api-docs-v1'
     ),
     re_path(
         r'^swagger(?P<format>\.json|\.yaml)$',

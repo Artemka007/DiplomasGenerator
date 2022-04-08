@@ -29,6 +29,7 @@
     <nav role="navigation" class="navbar">
         <section class="navbar__items__container" style="margin-left: 30%;">
             <a href="{% url 'editor' %}" class="navbar__item">Редактор грамот</a>
+            <a href="{% url 'api-docs-v1' %}" class="navbar__item">DOCS v1</a>
         </section>
         <section class="navbar__items__container" style="margin-right: 30%;">
             {% if request.user.is_authenticated %}
@@ -37,11 +38,10 @@
         </section>
     </nav>
     <main class="main" role="main">
-        <main data-action="main" style="display: flex; flex-direction: column; width: 800px; align-items: center;">
+        <div data-action="main" style="display: flex; flex-direction: column; width: 800px; align-items: center;">
             {% block content %}{% endblock %}
-        </main>
+        </div>
     </main>
-    <footer role="none" class="footer"></footer>
 </body>
 
 </html>

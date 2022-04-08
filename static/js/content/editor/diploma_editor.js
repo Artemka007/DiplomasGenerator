@@ -63,7 +63,7 @@ class DiplomaEditor {
 
         this.hd.setEventListeners()
         $('[data-action="main"]').append(this.container)
-        this.container.html(this.container.html() + `<img src="${this.diploma}" alt=""/>`)
+        this.container.html(this.container.html() + `<img src="${this.diploma.url}" alt=""/>`)
 
         this.managePanel = new DiplomaEditorManagePanel(mP, this.container)
         this.managePanel.init()

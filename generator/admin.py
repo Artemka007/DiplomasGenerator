@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from generator.models import DiplomaTemplate, GeneratedDiplomas, ZipFile
+from generator.models import Diploma, DiplomaTemplate, ZipFile
 
 admin.site.register(DiplomaTemplate)
-admin.site.register(GeneratedDiplomas)
+admin.site.register(Diploma)
 admin.site.register(ZipFile)

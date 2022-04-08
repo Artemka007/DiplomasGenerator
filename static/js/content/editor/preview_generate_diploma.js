@@ -5,7 +5,8 @@ class PreviewGenerateDiploma {
         this.data = {...window.history.state }
 
         this.d = {
-            template: baseURI + this.data['selectedTemplate'],
+            template_id: this.data['selectedTemplate']['id'],
+            template_url: baseURI + this.data['selectedTemplate']['url'],
             names: JSON.stringify(["Иван Иванов"]),
             x: this.data['resultX'],
             y: this.data['y1'],

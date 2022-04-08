@@ -5,11 +5,12 @@ class DiplomaTemplate(models.Model):
     src = models.ImageField(upload_to='diplomas/')
 
 
-class GeneratedDiplomas(models.Model):
-    generated_diploma = models.ImageField(upload_to='diplomas/generated/')
+class Diploma(models.Model):
+    src = models.ImageField(upload_to='diplomas/generated/')
+    temp = models.ForeignKey(DiplomaTemplate, on_delete=models.CASCADE, related_name="diplomas", null=True, blank=True)
 
     def get_full_url(self):
-        return self.generated_diploma.url
+        return self.src.url
 
 
 class ZipFile(models.Model):

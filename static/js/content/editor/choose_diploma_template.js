@@ -53,7 +53,10 @@ class ChooseDiplomaTemplate {
         el.off('click')
         el.on('click', e => {
             this.overrideEventListener(e)
-            this.selectedTemplate = $(e.currentTarget).data('url')
+            this.selectedTemplate = {
+                "url": $(e.currentTarget).data('url'),
+                "id": $(e.currentTarget).id
+            }
             this.setData()
             this.drawingTemplates()
             window.history.replaceState({ step: 1, ...this.data }, document.title, '')
@@ -71,7 +74,7 @@ class ChooseDiplomaTemplate {
             this.container.append(`
                 <section id="${this.templates[i]['id']}" data-url="${this.templates[i]['src']}" 
                         class="select_diploma_template" style="background-image: url(${this.templates[i]['src']}); margin: 10px; 
-                        border: ${this.selectedTemplate === this.templates[i]['src'] ? 'rgb(17,25,227) solid 2px' : 'aqua solid 2px'}">
+                        border: ${this.selectedTemplate?.url === this.templates[i]['src'] ? 'rgb(17,25,227) solid 2px' : 'aqua solid 2px'}">
                     <div data-action="select_diploma_actions" style="cursor: pointer; background-color: rgba(0,0,0,0); width: 100%; height: 100%; border-radius: 10px;"></div>
                 </section>`)
             this.setActionListeners()
@@ -81,7 +84,6 @@ class ChooseDiplomaTemplate {
     setData() {
         this.prevData.selectedTemplate = this.selectedTemplate
         this.data = this.prevData
-        console.log({ data: this.data.selectedTemplate })
         this.hd.setData(this.data)
     }
 

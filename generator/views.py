@@ -14,9 +14,10 @@ from rest_framework.decorators import api_view
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import Response
 
-from generator.models import DiplomaTemplate, ZipFile
-from generator.requests import GenerateDiplomaTemlplateRequestSerializer
+from generator.models import Diploma, DiplomaTemplate, ZipFile
+from generator.requests import GenerateDiplomaRequestSerializer
 from generator.responses import (
+    AnaliticsResponseSerializer, GenerateDiplomaResponseSerializer,
     GetDiplomaTemplateSuccessResponse,
     UploadDiplomaTemlplateSuccessResponseSerializer)
 from generator.serializers import DiplomaTemplateSerializer
@@ -85,7 +86,7 @@ class DiplomaTemplates(GenericAPIView):
 
     @swagger_auto_schema(
         manual_parameters=delete_template_query_parametrs,
-        response={
+        responses={
             200: ResponseSerializer,
             401: UnauthorizedResponseSerializer,
             500: FailResponseSerializer
@@ -110,9 +111,9 @@ class DiplomaTemplates(GenericAPIView):
 
 @swagger_auto_schema(
     method="post",
-    request_body=GenerateDiplomaTemlplateRequestSerializer,
+    request_body=GenerateDiplomaRequestSerializer,
     responses={
-        200: ResponseSerializer,
+        200: GenerateDiplomaResponseSerializer,
         401: UnauthorizedResponseSerializer,
         500: FailResponseSerializer
     }
@@ -146,11 +147,9 @@ def generate_diploma(request):
     for i in names:
         b = io.BytesIO()
 
-        import pdb;pdb.set_trace()
-
         path = generate_image_object(request.POST, i, True)
         image = Image.open(path)
-        image.save(b, format='JPEG')
+        image.save(b, format='PNG')
 
         b.seek(0)
 
@@ -164,5 +163,47 @@ def generate_diploma(request):
     return Response({
         'result': True, 
         'message': _('Images has been generated.'), 
-        'url': f.file.url
+        'url': f.file.url,
+        'path': f.file.path
     }, 200)
+
+class AnaliticsView(GenericAPIView):
+    queryset = Diploma.objects.all()
+
+    @swagger_auto_schema(
+        manual_parameters=analitics_query_parametrs,
+        responses={
+            200: AnaliticsResponseSerializer,
+            401: UnauthorizedResponseSerializer,
+            500: FailResponseSerializer
+        }
+    )
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({
+                'result': False, 
+                'message': _('User is not authenticated.')
+            }, 401)
+        id = request.GET.get("id")
+        try:
+            id = int(id)
+        except:
+            return Response({
+                "result": False,
+                "message": _("Type of parametr id should be integer.")
+            }, 500)
+        count = self._get_template_objects_count(id)
+
+        return Response({
+            "result": True,
+            "message": _("Templates count has been returned."),
+            "count": count
+        })
+
+    def _get_templates_count(self) -> int:
+        return self.get_queryset().count
+
+    def _get_template_objects_count(self, id: int) -> int:
+        templates = self.get_queryset().filter(temp__id=id)
+        return templates.count
+

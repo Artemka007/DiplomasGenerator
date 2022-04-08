@@ -1,10 +1,10 @@
 from django.forms import *
 
-from generator.models import GeneratedDiplomas
+from generator.models import Diploma
 
 
-class GeneratedDiplomasForm(ModelForm):
+class DiplomaForm(ModelForm):
     class Meta:
-        model = GeneratedDiplomas
+        model = Diploma
         fields = '__all__'
 
