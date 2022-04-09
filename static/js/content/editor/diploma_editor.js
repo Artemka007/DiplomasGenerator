@@ -65,7 +65,7 @@ class DiplomaEditor {
         $('[data-action="main"]').append(this.container)
         this.container.html(this.container.html() + `<img src="${this.diploma.url}" alt=""/>`)
 
-        this.managePanel = new DiplomaEditorManagePanel(mP, this.container)
+        this.managePanel = new DiplomaEditorManagePanel(mP, this.container, () => { this.rerenderSelectedPlace() })
         this.managePanel.init()
 
         this.container.css({ 'margin-top': '250px' })
@@ -104,23 +104,54 @@ class DiplomaEditor {
     }
 
     renderSelectedPlace() {
-        let el = `<div data-action="resize-container" style='position: absolute; 
-                              display: flex; 
-                              flex-direction: row;
-                              justify-content: center;
-                              color: ${this.managePanel.selectedColor};
-                              font-size: ${this.managePanel.selectedSize + 'px'};
-                              font-style: ${this.managePanel.selectedWeight};
-                              font-weight: ${this.managePanel.selectedWeight};
-                              font-family: Arial;
-                              border: rgb(8,30,170) dashed 2px; 
-                              width: ${this.x2 > this.x1 ? this.x2 - this.x1 + 'px' : this.x1 - this.x2 + 'px'}; 
-                              height: ${this.y2 > this.y1 ? this.y2 - this.y1 + 'px' : this.y1 - this.y2 + 'px'};
-                              top: ${this.y1 < this.y2 ? this.y1 - this.containerY + 'px' : this.y2 - this.containerY + 'px'};
-                              left: ${this.x1 < this.x2 ? this.x1 - this.containerX + 'px' : this.x2 - this.containerX + 'px'};
-                              cursor: ${!this.selectedPlaceIsMoving ? 'grab !important' : 'grabbing !important'}'>
-                        <div data-action="name-container">Иван Иванов</div>
-                    </div>`
+        let selectedStyle = this.managePanel.selectedStyle
+
+        let fWeight = ""
+        let fStyle = ""
+        let fSize = (this.managePanel.selectedSize || "24") + 'px'
+        let foregound = this.managePanel.selectedColor
+
+        switch (selectedStyle) {
+            case "italic":
+                {
+                    fStyle = "italic"
+                    break
+                }
+            case "bold":
+                {
+                    fWeight = "bold"
+                    break
+                }
+            case "bolditalic":
+                {
+                    fWeight = "bold"
+                    fStyle = "italic"
+                    break
+                }
+        }
+
+        let el = `
+        <div data-action="resize-container" 
+            style='
+                position: absolute; 
+                display: flex; 
+                flex-direction: row;
+                justify-content: center;
+                color: ${foregound};
+                font-size: ${fSize};
+                font-style: ${fStyle};
+                font-weight: ${fWeight};
+                font-family: "Arial", sans-serif;
+                border: rgb(8,30,170) dashed 2px; 
+                width: ${this.x2 > this.x1 ? this.x2 - this.x1 + 'px' : this.x1 - this.x2 + 'px'}; 
+                height: ${this.y2 > this.y1 ? this.y2 - this.y1 + 'px' : this.y1 - this.y2 + 'px'};
+                top: ${this.y1 < this.y2 ? this.y1 - this.containerY + 'px' : this.y2 - this.containerY + 'px'};
+                left: ${this.x1 < this.x2 ? this.x1 - this.containerX + 'px' : this.x2 - this.containerX + 'px'};
+                cursor: ${!this.selectedPlaceIsMoving ? 'grab !important' : 'grabbing !important'}
+            '
+        >
+            <div data-action="name-container">Иван Иванов</div>
+        </div>`
 
         let resizeHelpers = [
             `<span class="resize_helper" data-id="1" style="top: ${this.y1 - this.containerY - 2 + 'px'};left: ${this.x1 - this.containerX - 4 + 'px'};"></span>`,
@@ -269,33 +300,30 @@ class DiplomaEditor {
 }
 
 class DiplomaEditorManagePanel {
-    constructor(container, mainContainer, rerender) {
+    constructor(container, mainContainer) {
         this.container = container
         this.mainContainer = mainContainer
 
         this.fontParams = {
-            Size: [8, 10, 12, 14, 16, 18, 20, 28, 56, 72, 92],
-            Family: [],
-            Weight: ['auto', 'italic', 'bold'],
+            family: [],
+            style: ['auto', 'italic', 'bold', 'bolditalic'],
         }
 
         this.fontColorParam = $('[data-param="fontColor"]')
         this.fontSizeParam = $('[data-param="fontSize"]')
-        this.fontWeightParam = $('[data-param="fontWeight"]')
+        this.fontStyleParam = $('[data-param="fontStyle"]')
 
         this.selectedColor = window.history.state.selectedColor
         this.selectedSize = window.history.state.selectedSize
-        this.selectedWeight = window.history.state.selectedWeight
+        this.selectedStyle = window.history.state.selectedStyle
         this.selectedTemplate = window.history.state.selectedTemplate
 
         this.file = null
 
-        this.rerender = rerender
-
         this.data = {
             selectedColor: this.selectedColor,
             selectedSize: this.selectedSize,
-            selectedWeight: this.selectedWeight,
+            selectedStyle: this.selectedStyle,
             selectedTemplate: window.history.state.selectedTemplate,
             file: this.file,
         }
@@ -305,21 +333,21 @@ class DiplomaEditorManagePanel {
         this.setData()
 
         $('[data-action="main"]').append(this.container)
-        this.container = $('[data-action="main"]').find('section')
+        this.container = $('[data-action="main"]').find('[data-action="editor_panel"]')
 
         this.fontColorParam = $('[data-param="fontColor"]')
         this.fontSizeParam = $('[data-param="fontSize"]')
-        this.fontWeightParam = $('[data-param="fontWeight"]')
+        this.fontStyleParam = $('[data-param="fontStyle"]')
 
-        this.fontSizeParam.val(this.selectedSize || 16)
+        this.fontSizeParam.val(this.selectedSize || 24)
         this.fontColorParam.val(this.selectedColor || "#000000")
 
         let fp = this.fontParams
-        for (let i = 0; i < fp.Weight.length; i++) {
-            this.fontWeightParam.html(`${this.fontWeightParam.html()}<option value="${fp.Weight[i]}">${fp.Weight[i]}</option>`)
+        for (let i = 0; i < fp.style.length; i++) {
+            this.fontStyleParam.html(`${this.fontStyleParam.html()}<option value="${fp.style[i]}">${fp.style[i]}</option>`)
         }
 
-        let cP = $(`option[value=${this.selectedWeight || '16px'}]`)
+        let cP = $(`option[value=${this.selectedStyle || null}]`)
         cP.prop('selected', true)
 
         this.container.css({ width: this.mainContainer[0].clientWidth + 'px' })
@@ -339,9 +367,9 @@ class DiplomaEditorManagePanel {
             this.setEventData()
         })
 
-        this.fontWeightParam.on('change', e => {
+        this.fontStyleParam.on('change', e => {
             this.overrideEventListener(e)
-            this.selectedWeight = e.currentTarget.value
+            this.selectedStyle = e.currentTarget.value
             this.setEventData()
         })
 
@@ -367,7 +395,7 @@ class DiplomaEditorManagePanel {
         this.data = {
             selectedColor: this.selectedColor,
             selectedSize: this.selectedSize,
-            selectedWeight: this.selectedWeight,
+            selectedStyle: this.selectedStyle,
             selectedTemplate: this.selectedTemplate,
             file: this.file,
         }
@@ -384,10 +412,10 @@ const mP = '' +
     '    <div class="editor_panel__params">' +
     '        <label style="margin-bottom: 5px;">Параметры текста</label>' +
     '        <input class="editor_panel__params__item" style="width: 100%;" type="number" step="2" min="8" max="92"' +
-    '               value="16" data-param="fontSize">' +
+    '               value="24" data-param="fontSize">' +
     '        <input class="editor_panel__params__item" style="width: 100%;" type="color" data-param="fontColor">' +
-    '        <select class="editor_panel__params__item" style="width: 100%;" data-param="fontWeight">' +
-    '            <option value="16px">Стиль шрифта</option>' +
+    '        <select class="editor_panel__params__item" style="width: 100%;" data-param="fontStyle">' +
+    '            <option value>Стиль шрифта</option>' +
     '        </select>' +
     '    </div>' +
     '    <div class="editor_panel__params">' +

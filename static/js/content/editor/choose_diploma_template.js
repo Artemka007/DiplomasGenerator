@@ -55,7 +55,7 @@ class ChooseDiplomaTemplate {
             this.overrideEventListener(e)
             this.selectedTemplate = {
                 "url": $(e.currentTarget).data('url'),
-                "id": $(e.currentTarget).id
+                "id": e.currentTarget.id
             }
             this.setData()
             this.drawingTemplates()

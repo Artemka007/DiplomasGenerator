@@ -27,6 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.2.153', '127.0.0.1']
 
+CORS_ALLOWED_ORIGINS = [
+    'http://192.168.2.153:8000',
+]
+
 
 # Application definition
 
@@ -46,6 +50,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'account.middleware.AuthMiddleware',
     'account.middleware.SecurityMiddleware',
     'django.middleware.security.SecurityMiddleware',

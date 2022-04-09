@@ -36,10 +36,13 @@
   * python manage.py runserver - запуск сервера.
 ----------------------------------------------------------------------------------------------
 ## Что необходимо изменить в коде:
-  * ./diplomasgenerator/settings.py
-    - DEBUG = False
-    - ALLOWED_HOSTS = ["example.com"] 
-    - SECRET_KEY = "your_secret"
+./diplomasgenerator/settings.py
+  ```python 
+  SECRET_KEY = "mega_secret_key"
+  DEBUG = False
+  ALLOWED_HOSTS = ["example.com"] 
+  CORS_ALLOWED_ORIGINS = ["http://example.com"] 
+  ```
 ----------------------------------------------------------------------------------------------
 ## Ключевые технологии, используемые в проекте:
   * Языки:

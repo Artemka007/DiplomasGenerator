@@ -2,8 +2,7 @@ import io
 import os.path
 import random
 import string
-import urllib.request
-from typing import Dict
+from typing import Dict, Union
 
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -30,17 +29,30 @@ def url_to_image(url: str):
     return file
 
 
-def generate_byte_image(template: str, text: str, x: str, y: str, font_weight: str, font_size: str, foreground: str):
+def generate_byte_image(template: str, text: str, x: str, y: str, font_style: Union[str, None], font_size: str, foreground: str):
     '''
     Функция, которая генерирует изображение грамоты в битовом формате.
 
     :param template - url шаблона грамоты
+    :type template - str
+
     :param text - имя и фамилия ученика, для которого генерируется грамота
+    :type text - str
+
     :param x - середина двух крайних координат по оси x
+    :type x - str
+
     :param y - координата по оси y
-    :param font_weight
+    :type y - str
+
+    :param font_style
+    :type font_style - 'italic' | 'bold' | 'bolditalic' | None
+
     :param font_size
+    :type font_size - str
+
     :param foreground
+    :type foreground - str
     
     :return - изображение грамоты
     '''
@@ -48,11 +60,14 @@ def generate_byte_image(template: str, text: str, x: str, y: str, font_weight: s
     text_coordinates = (float(x), float(y))
     font_family = 'fonts/Arial/Arial.ttf'
 
-    if font_weight == 'italic':
+    if font_style == 'italic':
         font_family = 'fonts/Arial/Arial-Italic.ttf'
 
-    elif font_weight == 'bold':
+    elif font_style == 'bold':
         font_family = 'fonts/Arial/Arial-Bold.ttf'
+    
+    elif font_style == 'bolditalic':
+        font_family = 'fonts/Arial/Arial-BoldItalic.ttf'
     
     font_path = os.path.join(settings.STATICFILES_DIRS[0], font_family)
 
@@ -85,8 +100,8 @@ def generate_image_object(data: Dict[str, str], text: str, is_path: bool) -> str
     
     :return - путь к файлу грамоты или url грамоты
     '''
-    img = generate_byte_image(data.get('template_url'), text, data.get('x'), data.get('y'), data.get('font_weight'), data.get('font_size'),
-                         data.get('foreground'))
+    img = generate_byte_image(data.get('template_url'), text, data.get('x'), data.get('y'), data.get('font_style'), data.get('font_size', '24'),
+                         data.get('foreground', '#000000'))
     
     template_id = data.get("template_id")
     template_src = InMemoryUploadedFile(

@@ -10,7 +10,7 @@ class PreviewGenerateDiploma {
             names: JSON.stringify(["Иван Иванов"]),
             x: this.data['resultX'],
             y: this.data['y1'],
-            font_weight: this.data['selectedBold'],
+            font_style: this.data['selectedStyle'],
             font_size: this.data['selectedSize'],
             foreground: this.data['selectedColor'],
         }
