@@ -58,6 +58,8 @@ class HistoryDirections {
                     case '2':
                         {
                             $('[data-type="previous"]').prop('disabled', false)
+                            $('[data-type="next"]').prop('disabled', false)
+                            $('[data-type="next"]').html(`Вперед<i class="bi bi-arrow-right-circle" style="color: #fff; margin-left: 10px;"></i>`)
                             const de = new DiplomaEditor('<section data-action="edit_diploma" class="editor_container"></section>')
                             de.init()
                             de.setEventListeners()

@@ -56,13 +56,5 @@ const API = {
             headers: { "X-CSRFToken": getCookie("csrftoken") },
             dataType: 'json',
         })
-    },
-
-    signUp: function(data) {
-        return $.ajax('/account/sign_up/', {
-            method: 'POST',
-            headers: { "X-CSRFToken": getCookie("csrftoken") },
-            data: data
-        })
     }
 }

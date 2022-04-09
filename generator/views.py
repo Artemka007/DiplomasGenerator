@@ -5,9 +5,8 @@ import zipfile
 from diplomasgenerator.responses import (FailResponseSerializer,
                                          ResponseSerializer,
                                          UnauthorizedResponseSerializer)
-from django.utils.translation.trans_null import gettext_lazy as _
+from django.utils.translation.trans_real import gettext as _
 from drf_yasg.utils import swagger_auto_schema
-from openpyxl import load_workbook
 from PIL import Image
 from rest_framework import parsers
 from rest_framework.decorators import api_view
@@ -37,16 +36,10 @@ class DiplomaTemplates(GenericAPIView):
     @swagger_auto_schema(
         responses={
             200: GetDiplomaTemplateSuccessResponse,
-            401: UnauthorizedResponseSerializer,
             500: FailResponseSerializer
         }
     )
     def get(self, request):
-        if not request.user.is_authenticated:
-            return Response({
-                'result': False, 
-                'message': _('User is not authenticated.')
-            }, 401)
         templates = self.get_queryset()
         return Response({
             'result': True,
@@ -58,16 +51,10 @@ class DiplomaTemplates(GenericAPIView):
         manual_parameters=upload_template_formdata_parametrs, 
         responses={
             200: UploadDiplomaTemlplateSuccessResponseSerializer, 
-            401: UnauthorizedResponseSerializer,
             500: FailResponseSerializer
         }
     )
     def post(self, request):
-        if not request.user.is_authenticated:
-            return Response({
-                'result': False, 
-                'message': _('User is not authenticated.')
-            }, 401)
         template_file = request.FILES.get('file')
         template_obj = DiplomaTemplate.objects.create(src=template_file)
         try:
@@ -88,16 +75,10 @@ class DiplomaTemplates(GenericAPIView):
         manual_parameters=delete_template_query_parametrs,
         responses={
             200: ResponseSerializer,
-            401: UnauthorizedResponseSerializer,
             500: FailResponseSerializer
         }
     )
     def delete(self, request):
-        if not request.user.is_authenticated:
-            return Response({
-                'result': False, 
-                'message': _('User is not authenticated.')
-            }, 401)
         id = request.POST.get('id')
         try:
             temp = DiplomaTemplate.objects.get(pk=id)
@@ -114,7 +95,6 @@ class DiplomaTemplates(GenericAPIView):
     request_body=GenerateDiplomaRequestSerializer,
     responses={
         200: GenerateDiplomaResponseSerializer,
-        401: UnauthorizedResponseSerializer,
         500: FailResponseSerializer
     }
 )
@@ -123,12 +103,6 @@ def generate_diploma(request):
     '''
     Представление для генерации грамот
     '''
-    
-    if not request.user.is_authenticated:
-        return Response({
-            'result': False, 
-            'message': _('User is not authenticated.')
-        }, 401)
     # получяем массив с именами учеников
     names = json.loads(request.POST.get('names'))
 
@@ -171,26 +145,20 @@ class AnaliticsView(GenericAPIView):
     queryset = Diploma.objects.all()
 
     @swagger_auto_schema(
-        manual_parameters=analitics_query_parametrs,
+        manual_parameters=analitics_query_parametrs + global_parametrs,
         responses={
             200: AnaliticsResponseSerializer,
-            401: UnauthorizedResponseSerializer,
             500: FailResponseSerializer
         }
     )
     def get(self, request):
-        if not request.user.is_authenticated:
-            return Response({
-                'result': False, 
-                'message': _('User is not authenticated.')
-            }, 401)
         id = request.GET.get("id")
         try:
             id = int(id)
         except:
             return Response({
                 "result": False,
-                "message": _("Type of parametr id should be integer.")
+                "message": _("Type of parametr id should be an integer.")
             }, 500)
         count = self._get_template_objects_count(id)
 

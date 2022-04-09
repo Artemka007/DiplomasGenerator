@@ -54,11 +54,6 @@ class DiplomaEditor {
 
     init() {
         $('[data-action="to_upload"]').remove()
-        if (!this.getSelectedPlace()) {
-            $('[data-type="next"]').prop('disabled', true)
-        } else {
-            $('[data-type="next"]').prop('disabled', false)
-        }
         this.hd.init()
 
         this.hd.setEventListeners()
@@ -75,6 +70,12 @@ class DiplomaEditor {
         })
 
         this.x1 && this.x2 && this.renderSelectedPlace()
+
+        if (!this.getSelectedPlace() || !this.managePanel.data.file) {
+            $('[data-type="next"]').prop('disabled', true)
+        } else {
+            $('[data-type="next"]').prop('disabled', false)
+        }
     }
 
     setEventListeners() {
@@ -219,7 +220,12 @@ class DiplomaEditor {
     rerenderSelectedPlace() {
         this.removeSelectedPlace()
         this.renderSelectedPlace()
-        $('[data-type="next"]').prop('disabled', false)
+
+        if (!this.getSelectedPlace() || !this.managePanel.data.file) {
+            $('[data-type="next"]').prop('disabled', true)
+        } else {
+            $('[data-type="next"]').prop('disabled', false)
+        }
     }
 
     /**

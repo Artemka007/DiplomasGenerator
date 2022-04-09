@@ -36,7 +36,7 @@
   * python manage.py runserver - запуск сервера.
 ----------------------------------------------------------------------------------------------
 ## Что необходимо изменить в коде:
-./diplomasgenerator/settings.py
+/diplomasgenerator/settings.py
   ```python 
   SECRET_KEY = "mega_secret_key"
   DEBUG = False
