@@ -132,7 +132,7 @@ class DiplomaEditor {
         }
 
         let el = `
-        <div data-action="resize-container" 
+        <div data-action="resize-container"
             style='
                 position: absolute; 
                 display: flex; 
@@ -413,20 +413,21 @@ class DiplomaEditorManagePanel {
     }
 }
 
-const mP = '' +
-    '<section data-action="editor_panel" class="editor_panel" style="display: flex; flex-direction: row; z-index: 1000;">' +
-    '    <div class="editor_panel__params">' +
-    '        <label style="margin-bottom: 5px;">Параметры текста</label>' +
-    '        <input class="editor_panel__params__item" style="width: 100%;" type="number" step="2" min="8" max="92"' +
-    '               value="24" data-param="fontSize">' +
-    '        <input class="editor_panel__params__item" style="width: 100%;" type="color" data-param="fontColor">' +
-    '        <select class="editor_panel__params__item" style="width: 100%;" data-param="fontStyle">' +
-    '            <option value>Стиль шрифта</option>' +
-    '        </select>' +
-    '    </div>' +
-    '    <div class="editor_panel__params">' +
-    '        <label style="margin-bottom: 5px; align-items: center">Excel файл</label>' +
-    '        <input data-action="fileInput" class="editor_panel__params__item" style="width: 130px; display: none;" type="file" value="16" data-param="excelFile">' +
-    '        <button data-action="chooseFile" class="btn_default">Загрузить</button>' +
-    '    </div>' +
-    '</section>'
+const mP = `
+    <section data-action="editor_panel" class="editor_panel" style="display: flex; flex-direction: row; z-index: 1000;">
+        <div class="editor_panel__params">
+            <label style="margin-bottom: 5px;">Параметры текста</label>
+            <input class="editor_panel__params__item" style="width: 100%;" type="number" step="2" min="8" max="92"
+                   value="24" data-param="fontSize">
+            <input class="editor_panel__params__item" style="width: 100%;" type="color" data-param="fontColor">
+            <select class="editor_panel__params__item" style="width: 100%;" data-param="fontStyle">
+                <option value>Стиль шрифта</option>
+            </select>
+        </div>
+        <div class="editor_panel__params">
+            <label style="margin-bottom: 5px; align-items: center">Excel файл</label>
+            <input data-action="fileInput" class="editor_panel__params__item" style="width: 130px; display: none;" type="file" value="16" data-param="excelFile">
+            <button data-action="chooseFile" class="btn_default">Загрузить</button>
+        </div>
+    </section>
+`

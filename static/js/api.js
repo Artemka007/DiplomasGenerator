@@ -24,37 +24,49 @@ const API = {
     baseURI: `/api/${apiversion}`,
 
     getTemplates: function() {
-        return $.get(`${API.baseURI}/templates/`)
-    },
-
-    /**
-     * @param {*} data 
-     * @returns {Promise<any>}
-     */
-    uploadTemplate: function(data) {
-        return $.ajax(`${API.baseURI}/templates/`, {
+        return fetch(`${API.baseURI}/templates/get/`, {
             method: "POST",
-            headers: { "X-CSRFToken": getCookie("csrftoken") },
-            data: data,
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "Content-Type": "application/json;charset=utf-8"
+            },
             contentType: false,
             processData: false,
-        })
+        }).then(res => res.json())
+    },
+
+    uploadTemplate: function(data) {
+        return fetch(`${API.baseURI}/templates/create/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify({ data }),
+            contentType: false,
+            processData: false,
+        }).then(res => res.json())
     },
 
     deleteTemplate: function(data) {
-        return $.ajax(`${API.baseURI}/templates/`, {
-            method: "DELETE",
-            headers: { "X-CSRFToken": getCookie("csrftoken") },
-            data: data,
-        })
+        return fetch(`${API.baseURI}/templates/delete/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify({ data }),
+        }).then(res => res.json())
     },
 
     generateDiploma: function(data) {
-        return $.ajax(`${API.baseURI}/generator/`, {
+        return fetch(`${API.baseURI}/generator/`, {
             method: 'POST',
-            data: data,
-            headers: { "X-CSRFToken": getCookie("csrftoken") },
-            dataType: 'json',
-        })
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify({ data }),
+        }).then(res => res.json())
     }
 }

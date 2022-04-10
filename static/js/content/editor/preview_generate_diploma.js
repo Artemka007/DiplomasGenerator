@@ -7,7 +7,7 @@ class PreviewGenerateDiploma {
         this.d = {
             template_id: this.data['selectedTemplate']['id'],
             template_url: baseURI + this.data['selectedTemplate']['url'],
-            names: JSON.stringify(["Иван Иванов"]),
+            names: ["Иван Иванов"],
             x: this.data['resultX'],
             y: this.data['y1'],
             font_style: this.data['selectedStyle'],
@@ -26,17 +26,13 @@ class PreviewGenerateDiploma {
                     let left = window.innerWidth / 2 - this.container[0].clientWidth / 2
                     this.container.css({ 'top': 300, 'left': left - 8 })
                 })
-
-                (new ModalWindow(res.message, 'ok')).show()
-            } else {
-                new ModalWindow(res.message, 'error')
             }
         })
 
         $('[data-type="next"]').off('click')
         $('[data-type="next"]').on('click', e => {
             readXlsx(this.data.file).then(names => {
-                this.d.names = JSON.stringify(names)
+                this.d.names = names
                 API.generateDiploma(this.d).then(res => {
                     if (res.result) {
                         window.location.href = res.url

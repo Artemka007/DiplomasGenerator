@@ -1,10 +1,9 @@
 from django.http import HttpResponseRedirect, JsonResponse
-from django.utils.deprecation import MiddlewareMixin
 
 from account.utils import check_token
 
 
-class AuthMiddleware(MiddlewareMixin):
+class AuthMiddleware(object):
     '''
     Промежуточное ПО для авторизации по файлам cookie или по токену.
     '''
@@ -21,24 +20,26 @@ class AuthMiddleware(MiddlewareMixin):
 
         Выполняет следующие действия:
         1. Проверяет, аутентифицирован ли пользователь. Если да, то возвращает None (ничего не предпринимает). Если нет, то переходит дальше.
-        2. Берет токен из заголовка "Authorization"
+        2. Берет токен и пользователя из данных в запросе.
         3. Проверяет наличие токена. Если токен не пришел, то редиректит на страницу логина (раз нет токена, значить запрос из браузера). Если токен пришел, то переходит к проверке токена.
-        4. Проверяет токен на правильность с помощью функции :check_token:`account.utils.check_token`
+        4. Проверяет токен на правильность с помощью функции :py:func:`~account.utils.check_token`
         5. Если токен не корректный, то возвращает сообщение, что пользователь не авторизован с ошибкой 401.
         '''
         if request.user.is_authenticated: # 1
             return None
-        token = request.META.get("HTTP_AUTHORIZATION", None) # 2
+        data = request.POST.get("auth", None) #
+        username = data.get("api_user")       # 2
+        token = data.get("api_secret")        # 
         if token is None: # 3
             if request.get_full_path() != '/account/sign_in/':
                 return HttpResponseRedirect("/account/sign_in/")
             return None
-        is_authenticated = check_token(token) # 4
-        if not is_authenticated: # 5
+        is_correct = check_token(token, username) # 4
+        if not is_correct: # 5
             return JsonResponse({"result": False, "message": "Пользователь не авторизован."}, status=401)
         return None
 
-class SecurityMiddleware(MiddlewareMixin):
+class SecurityMiddleware(object):
     '''
     ПО, отклющающее проверку CSRF-токена, если пришел токен авторизации.
     '''

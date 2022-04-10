@@ -4,8 +4,8 @@ from django.conf import settings
 from django.utils import timezone
 
 
-def check_token(token: str) -> bool:
-    API_USER = settings.API_USER
+def check_token(token: str, username: str) -> bool:
+    API_USER = username
     API_KEY = settings.SECRET_KEY
     LINUX_TIMESTAMP = timezone.now().time.__str__()
 
