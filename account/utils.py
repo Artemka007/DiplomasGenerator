@@ -5,6 +5,16 @@ from django.utils import timezone
 
 
 def check_token(token: str, username: str) -> bool:
+    """
+    Проверяет токен, приходящий в запросе на корректность.
+
+    Args:
+        token (str): токен (API-ключ)
+        username (str): имя пользователя
+
+    Returns:
+        (bool): корректен ли токен.
+    """
     API_USER = username
     API_KEY = settings.SECRET_KEY
     LINUX_TIMESTAMP = timezone.now().time.__str__()

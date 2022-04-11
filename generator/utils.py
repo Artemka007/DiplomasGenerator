@@ -15,13 +15,15 @@ from generator.serializers import DipomaSerializer
 
 
 def url_to_image(url: str):
-    '''
+    """
     Функция для открытия изображения по url.
     
-    :param url
+    Args:
+        url (str): url грамоты
 
-    :return - файл изображения
-    '''
+    Returns:
+        (BufferedReader): файл изображения
+    """
 
     # т.к. с фронта приходит url изображения, то его необходимо преобразовать в путь к изображению на компьютере
     path = url.split("/media/")[1]
@@ -30,32 +32,21 @@ def url_to_image(url: str):
 
 
 def generate_byte_image(template: str, text: str, x: str, y: str, font_style: Union[str, None], font_size: str, foreground: str):
-    '''
-    Функция, которая генерирует изображение грамоты в битовом формате.
+    """
+    Генерация изображения грамоты в битовом формате.
 
-    :param template - url шаблона грамоты
-    :type template - str
+    Args:
+        template (str): url шаблона грамоты
+        text (str): имя и фамилия ученика, для которого генерируется грамота
+        x (str): середина двух крайних координат по оси x
+        y (str): координата по оси y
+        font_style (Union[str, None]): стиль шрифта (italic | bold | bolditalic)
+        font_size (str): размер шрифта
+        foreground (str): цвет шрифта
 
-    :param text - имя и фамилия ученика, для которого генерируется грамота
-    :type text - str
-
-    :param x - середина двух крайних координат по оси x
-    :type x - str
-
-    :param y - координата по оси y
-    :type y - str
-
-    :param font_style
-    :type font_style - 'italic' | 'bold' | 'bolditalic' | None
-
-    :param font_size
-    :type font_size - str
-
-    :param foreground
-    :type foreground - str
-    
-    :return - изображение грамоты
-    '''
+    Returns:
+        (ContentFile[bytes]): изображение грамоты
+    """
 
     text_coordinates = (float(x), float(y))
     font_family = 'fonts/Arial/Arial.ttf'
@@ -90,16 +81,18 @@ def generate_byte_image(template: str, text: str, x: str, y: str, font_style: Un
 
     return new_image
 
-def generate_image_object(data: Dict[str, str], text: str, is_path: bool) -> str:
-    '''
-    Функция, которая генерирует объект грамоты и сохраняет его в базе данных.
-    
-    :param data - данные в POST-запросе
-    :param text - имя и фамилия ученика, для которого генерируется грамота
-    :param is_path - флаг, который показывает, вернуть путь к файлу грамоты, или вернуть ее url
-    
-    :return - путь к файлу грамоты или url грамоты
-    '''
+def generate_diploma_object(data: Dict[str, str], text: str, is_path: bool) -> str:
+    """
+    Генерация грамот по параметрам.
+
+    Args:
+        data (Dict[str, str]): параметры для генерации грамоты
+        text (str): текст для записи на грамоту по координатам
+        is_path (bool): вернуть путь к грамоте или url грамоты
+
+    Returns:
+        (str): url или путь к файлу грамоты
+    """
     img = generate_byte_image(data.get('template_url'), text, data.get('x'), data.get('y'), data.get('font_style'), data.get('font_size', '24'),
                          data.get('foreground', '#000000'))
     
@@ -114,14 +107,14 @@ def generate_image_object(data: Dict[str, str], text: str, is_path: bool) -> str
     )
 
     if template_id is not None:
-        diploma = DipomaSerializer(data={"temp": int(template_id), "src": template_src})
+        serializer = DipomaSerializer(data={"temp": int(template_id), "src": template_src})
     else:
-        diploma = DipomaSerializer(data={"src": template_src})
+        serializer = DipomaSerializer(data={"src": template_src})
     
-    diploma.is_valid(raise_exception=True)
-    instance = diploma.save()
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
 
     if is_path:
-        return diploma.instance.src.path
+        return serializer.instance.src.path
     else:
-        return diploma.instance.src.url
+        return serializer.instance.src.url

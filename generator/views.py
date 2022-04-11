@@ -3,8 +3,7 @@ import json
 import zipfile
 
 from diplomasgenerator.responses import (FailResponseSerializer,
-                                         ResponseSerializer,
-                                         UnauthorizedResponseSerializer)
+                                         ResponseSerializer)
 from django.utils.translation.trans_real import gettext as _
 from drf_yasg.utils import swagger_auto_schema
 from PIL import Image
@@ -115,7 +114,7 @@ class GenerateDiplomaView(APIView):
 
         # Если длинна массива равна одному, значит пришел запрос на тестовую грамоту, следовательно zip-файла создавать не нужно
         if len(names) <= 1:
-            url = generate_image_object(data, names[0], False)
+            url = generate_diploma_object(data, names[0], False)
             return Response({
                 'result': True,
                 'message': _('Images was generated.'),
@@ -128,7 +127,7 @@ class GenerateDiplomaView(APIView):
         for i in names:
             b = io.BytesIO()
 
-            path = generate_image_object(data, i, True)
+            path = generate_diploma_object(data, i, True)
             image = Image.open(path)
             image.save(b, format='PNG')
 
@@ -153,7 +152,7 @@ class AnaliticsView(GenericAPIView):
     queryset = Diploma.objects.all()
 
     @swagger_auto_schema(
-        manual_parameters=analitics_query_parametrs + global_parametrs,
+        manual_parameters=analitics_query_parametrs,
         responses={
             200: AnaliticsResponseSerializer,
             500: FailResponseSerializer

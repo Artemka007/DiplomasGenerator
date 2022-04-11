@@ -11,3 +11,4 @@ def index(request):
 @login_required
 def editor(request):
     return render(request, 'diploma_editor.html')
+
