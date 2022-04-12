@@ -45,6 +45,17 @@
   DEBUG = False
   ALLOWED_HOSTS = ["example.com"] 
   CORS_ALLOWED_ORIGINS = ["http://example.com"] 
+  DATABASES = {
+      # конфиг для постгреса
+      'default': {
+          'ENGINE': 'django.db.backends.postgresql',
+          'NAME': 'db_name',
+          'USER': 'db_user',
+          'PASSWORD': 'db_user_password',
+          'HOST': 'db_host',
+          'PORT': 'db_port_number',
+      }
+  }
   ```
 ----------------------------------------------------------------------------------------------
 ## Ключевые технологии, используемые в проекте:
