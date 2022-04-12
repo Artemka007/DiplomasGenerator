@@ -35,6 +35,8 @@
   * python manage.py migrate & python manage.py makemigrations - создание и применение миграций.
   * python manage.py createsuperuser - создание аккаунта администратора.
   * python manage.py runserver - запуск сервера.
+  * cd ./static/js - открытие папки с ui
+  * npm i - установка зависимостей Node
 ----------------------------------------------------------------------------------------------
 ## Что необходимо изменить в коде:
 /diplomasgenerator/settings.py
