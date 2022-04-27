@@ -25,7 +25,8 @@ class AuthMiddleware(object):
         4. Проверяет токен на правильность с помощью функции :py:func:`~account.utils.check_token`
         5. Если токен не корректный, то возвращает сообщение, что пользователь не авторизован с ошибкой 401.
         '''
-        if request.user.is_authenticated: # 1
+        print(request.path)
+        if request.user.is_authenticated or request.path == "/account/sign_in/": # 1
             return None
         data = request.POST.get("auth", None) #
         username = data.get("api_user")       # 2

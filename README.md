@@ -32,7 +32,7 @@
 ## Последовательность действий при установке проекта, без учета использования Docker или proxy-сервера:
   * python3 -m venv venv - создание виртуального окружения.
   * pip install -r requirements.txt - установка зависимостей.
-  * python manage.py migrate & python manage.py makemigrations - создание и применение миграций.
+  * python manage.py makemigrations & python manage.py migrate - создание и применение миграций.
   * python manage.py createsuperuser - создание аккаунта администратора.
   * python manage.py runserver - запуск сервера.
   * cd ./static/js - открытие папки с ui
